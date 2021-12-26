@@ -22,5 +22,7 @@ services:
   server:
     build: ./server
     restart: always
+    volumes:
+      - ./server:/opt/server
     ports:
       - 8000:8000
