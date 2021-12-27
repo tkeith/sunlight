@@ -8,4 +8,6 @@ RUN npm install
 
 EXPOSE 8000
 
-CMD ["npx", "nodemon", "./src/server.js"]
+WORKDIR /opt/server/src
+
+CMD ["npx", "nodemon", "./server.js"]
