@@ -14,15 +14,15 @@ routes.route('/').get((req, res) => {
 
 routes.route('/save').post((req, res) => {
   getDb()
-    .then((db) => {
+    .then((db) =>
       db.collection('test').updateOne(
         {},
         { $set: { text: req.body.text } },
-        {
-          upsert: true,
-        }).then(() =>
-          res.json())
-    })
+        { upsert: true, })
+    )
+    .then(() =>
+      res.json()
+    )
 })
 
 export default routes
