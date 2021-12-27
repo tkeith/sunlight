@@ -1,7 +1,26 @@
-#!/bin/bash
+#!/usr/bin/env python3
 
-set -e
-cd $(dirname $0)
-docker-compose down
-docker-compose build
-docker-compose up
+import json
+import os
+import os.path
+import argparse
+import subprocess
+
+proj_dir = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
+
+parser = argparse.ArgumentParser(description='run or deploy the application')
+parser.add_argument('command', type=str,
+                    help='command to run -- can be: fg, bg, stop, deploy, cli')
+parser.add_argument('config', type=str,
+                    help='config filename')
+args = parser.parse_args()
+
+with open(args.config) as config_f:
+  config = json.load(config_f)
+
+os.chdir(proj_dir)
+
+if args.command == 'fg':
+  subprocess.call(['docker-compose', 'down'])
+  subprocess.call(['docker-compose', 'build'])
+  subprocess.call(['docker-compose', 'up'])
