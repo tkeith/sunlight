@@ -34,11 +34,5 @@ services:
     restart: always
     volumes:
       - ./server/src:/opt/server/src
-
-  nginx:
-    image: nginx:1.21.4
-    restart: always
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
     ports:
       - 8000:8000
