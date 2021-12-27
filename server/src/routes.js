@@ -6,15 +6,18 @@ export const routes = Router()
 
 routes.route('/').get((req, res) => {
   getDb()
-    .then((db) => {
-      db.collection('test').findOne({}).then(row => res.json({ text: row?.text || "no data yet" }))
-    })
+    .then(db =>
+      db.collection('test').findOne({})
+    )
+    .then(row =>
+      res.json({ text: row?.text || "no data yet" })
+    )
     .catch((err) => { console.log(err) })
 })
 
 routes.route('/save').post((req, res) => {
   getDb()
-    .then((db) =>
+    .then(db =>
       db.collection('test').updateOne(
         {},
         { $set: { text: req.body.text } },
