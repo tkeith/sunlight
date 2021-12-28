@@ -14,6 +14,7 @@ DEFAULT_PORT = 8000
 BUILD_PATH = 'build'
 EXPRESS_ENABLED = False
 MONGO_ENABLED = True
+CERTBOT_EMAIL = 'certbot-notifications@tk.co'
 
 def main():
   proj_dir = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
@@ -72,6 +73,10 @@ def parse_config(config):
   if mongo_express_enabled:
     add_compose_config('mongo-express')
 
+  develop = config.get('develop', False)
+  if develop:
+    add_compose_config('develop')
+
   domain = config.get('domain')
   if domain:
     use_ssl = True
@@ -79,7 +84,6 @@ def parse_config(config):
     use_ssl = False
     local = config.get('local', True)
     port = config.get('port', DEFAULT_PORT)
-  develop = config.get('develop', False)
   admin_password = config.get('admin_password')
   if admin_password is None:
     admin_password = random_password()
@@ -197,13 +201,13 @@ def config_nginx():
   with open(os.path.join('build', 'nginx-app.conf'), 'w') as f:
     f.write(nginx_config)
 
-
-  # Below doesn't work because env vars aren't accessible at build-time, but this code may be useful for future dynamic env vars
-  # nginx_env = textwrap.dedent(f'''
-  #   ADMIN_PASSWORD={admin_password}
-  # ''')
-  # with open(os.path.join('build', 'nginx.env'), 'w') as f:
-  #   f.write(nginx_env)
+  nginx_env = textwrap.dedent(f'''
+    USE_SSL={'true' if use_ssl else 'false'}
+    CERTBOT_DOMAIN={domain}
+    CERTBOT_EMAIL={CERTBOT_EMAIL}
+  ''')
+  with open(os.path.join('build', 'nginx.env'), 'w') as f:
+    f.write(nginx_env)
 
   with open(os.path.join('build', 'nginx-admin-password.txt'), 'w') as f:
     f.write(admin_password)

@@ -7,5 +7,3 @@ COPY package.json package-lock.json ./
 RUN npm install
 
 WORKDIR /opt/next/src
-
-CMD ["npx", "next", "dev", "-p", "8001"]

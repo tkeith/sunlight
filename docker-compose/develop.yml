@@ -1,0 +1,4 @@
+services:
+
+  next:
+    command: ["npx", "next", "dev", "-p", "8001"]

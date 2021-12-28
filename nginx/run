@@ -1,0 +1,23 @@
+#!/bin/bash
+
+cd `dirname $0`
+
+$(
+  while true; do
+    nginx -g 'daemon off;'
+    sleep 1
+  done
+) &
+
+setup_cert () {
+  certbot certonly -n --nginx -d "${CERTBOT_DOMAIN}" -m "${CERTBOT_EMAIL}" --agree-tos
+  cp /opt/nginx-app.conf /etc/nginx/conf.d/nginx-app.conf
+  /etc/init.d/nginx reload
+}
+
+while true; do
+  if $USE_SSL; then
+    setup_cert
+  fi
+  sleep 10
+done

@@ -1,5 +1,9 @@
 version: '3.8'
 
+volumes:
+
+  nginx_etc_letsencrypt: null
+
 services:
 
   next:
@@ -7,6 +11,7 @@ services:
     restart: always
     volumes:
       - ../next/src:/opt/next/src
+    command: bash -c 'npx next build && npx next start -p 8001'
 
   nginx:
     build:
@@ -17,3 +22,8 @@ services:
     restart: always
     ports:
       - 8000:8000
+    volumes:
+      - ../nginx/run:/opt/run
+      - nginx_etc_letsencrypt:/etc/letsencrypt
+    env_file:
+      - ../build/nginx.env
