@@ -5,7 +5,7 @@ import routes from "./routes.js"
 
 dotenv.config({ path: "./config.env" })
 
-const port = process.env.PORT || 8000
+const port = 8080
 const app = express()
 app.use(cors())
 app.use(json())
