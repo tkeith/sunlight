@@ -29,10 +29,17 @@ services:
     build: ./server
     depends_on:
       - mongo
-      - mongo-express
     restart: always
     volumes:
       - ./server/src:/opt/server/src
+
+  client:
+    build: ./client
+    depends_on:
+      - server
+    restart: always
+    volumes:
+      - ./client/src:/opt/client/src
 
   nginx:
     build:

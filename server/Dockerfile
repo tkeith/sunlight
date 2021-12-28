@@ -6,8 +6,6 @@ COPY package.json package-lock.json ./
 
 RUN npm install
 
-EXPOSE 8000
-
 WORKDIR /opt/server/src
 
 CMD ["npx", "nodemon", "./server.js"]
