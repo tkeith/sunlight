@@ -50,7 +50,7 @@ def docker_build():
   subprocess.call(['docker-compose', 'build'])
 
 def parse_config(config):
-  global use_ssl, local, port, develop, admin_password
+  global use_ssl, local, port, develop, admin_password, domain
 
   domain = config.get('domain')
   if domain:
@@ -142,7 +142,6 @@ def config_nginx():
         server_name {domain};
 
         listen 80;
-        listen [::]:80;
 
         return 301 https://{domain}$request_uri;
       }}
@@ -151,7 +150,6 @@ def config_nginx():
         server_name {domain};
 
         listen 443 ssl http2;
-        listen [::]:443 ssl http2;
 
         {app_part}
 
@@ -159,23 +157,12 @@ def config_nginx():
         ssl_certificate_key /etc/letsencrypt/live/{domain}/privkey.pem;
       }}
     ''')
-  elif local:
+  else:
     nginx_config = textwrap.dedent(f'''
       server {{
         server_name app;
 
-        listen {port};
-        listen [::]:{port};
-
-        {app_part}
-      }}
-    ''')
-  else: # not use_ssl; not local
-    nginx_config = textwrap.dedent(f'''
-      server {{
-        server_name app;
-
-        listen 127.0.0.1:{port};
+        listen 8000;
 
         {app_part}
       }}
