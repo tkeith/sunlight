@@ -1,0 +1,11 @@
+services:
+
+  express:
+    build: ../express
+    restart: always
+    volumes:
+      - ../express/src:/opt/express/src
+
+  nginx:
+    depends_on:
+      - express

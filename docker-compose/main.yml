@@ -1,26 +1,6 @@
 version: '3.8'
 
-volumes:
-  mongo: null
-
 services:
-
-  mongo:
-    image: mongo:5.0.5
-    restart: always
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: app
-      MONGO_INITDB_ROOT_PASSWORD: app
-    volumes:
-      - mongo:/data/db
-
-  express:
-    build: ../express
-    depends_on:
-      - mongo
-    restart: always
-    volumes:
-      - ../express/src:/opt/express/src
 
   next:
     build: ../next
@@ -34,7 +14,6 @@ services:
       context: ../build
     depends_on:
       - next
-      - express
     restart: always
     ports:
       - 8000:8000

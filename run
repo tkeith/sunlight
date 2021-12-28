@@ -12,6 +12,8 @@ import textwrap
 PROJECT_NAME = 'tkfw2'
 DEFAULT_PORT = 8000
 BUILD_PATH = 'build'
+EXPRESS_ENABLED = False
+MONGO_ENABLED = True
 
 def main():
   proj_dir = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
@@ -46,7 +48,7 @@ def main():
     subprocess.call(['docker-compose'] + compose_configs + ['run', 'server', 'node'])
 
 def docker_build():
-  subprocess.call(['docker-compose', 'down'])
+  subprocess.call(['docker-compose'] + compose_configs + ['down'])
   subprocess.call(['docker-compose'] + compose_configs + ['build'])
 
 def parse_config(config):
@@ -60,8 +62,13 @@ def parse_config(config):
 
   add_compose_config('main')
 
-  mongo_express_enabled = config.get('mongo_express_enabled', False)
+  if EXPRESS_ENABLED:
+    add_compose_config('express')
 
+  if MONGO_ENABLED:
+    add_compose_config('mongo')
+
+  mongo_express_enabled = config.get('mongo_express_enabled', False)
   if mongo_express_enabled:
     add_compose_config('mongo-express')
 
@@ -112,23 +119,26 @@ def config_nginx():
       proxy_buffering off;
       proxy_redirect off;
     }}
-
-    location /express/ {{
-      proxy_pass http://express:8002/;
-
-      proxy_http_version 1.1;
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "upgrade";
-
-      proxy_set_header Host $host;
-      proxy_set_header X-Real-IP $remote_addr;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      proxy_set_header X-Forwarded-Proto $scheme;
-
-      proxy_buffering off;
-      proxy_redirect off;
-    }}
   ''')
+
+  if EXPRESS_ENABLED:
+    app_part += textwrap.dedent(f'''
+      location /express/ {{
+        proxy_pass http://express:8002/;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_buffering off;
+        proxy_redirect off;
+      }}
+    ''')
 
   if mongo_express_enabled:
     app_part += textwrap.dedent(f'''
