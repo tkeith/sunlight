@@ -85,7 +85,7 @@ def config_nginx():
     send_timeout                300;
 
     location / {{
-      proxy_pass http://client:8001/;
+      proxy_pass http://next:8001/;
 
       proxy_http_version 1.1;
       proxy_set_header Upgrade $http_upgrade;
@@ -101,7 +101,7 @@ def config_nginx():
     }}
 
     location /express/ {{
-      proxy_pass http://server:8002/;
+      proxy_pass http://express:8002/;
 
       proxy_http_version 1.1;
       proxy_set_header Upgrade $http_upgrade;
@@ -179,7 +179,7 @@ def config_nginx():
   # with open(os.path.join('build', 'nginx.env'), 'w') as f:
   #   f.write(nginx_env)
 
-  with open(os.path.join('build', 'nginx_admin_password.txt'), 'w') as f:
+  with open(os.path.join('build', 'nginx-admin-password.txt'), 'w') as f:
     f.write(admin_password)
 
 

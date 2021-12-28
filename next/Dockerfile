@@ -1,11 +1,11 @@
 FROM node:17.3.0
 
-WORKDIR /opt/client
+WORKDIR /opt/next
 
 COPY package.json package-lock.json ./
 
 RUN npm install
 
-WORKDIR /opt/client/src
+WORKDIR /opt/next/src
 
 CMD ["npx", "next", "dev", "-p", "8001"]

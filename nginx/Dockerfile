@@ -6,6 +6,6 @@ RUN apt-get update \
 
 COPY ./nginx_app.conf /etc/nginx/conf.d/nginx_app.conf
 
-COPY ./nginx_admin_password.txt /opt/nginx_admin_password.txt
+COPY ./nginx-admin-password.txt /opt/nginx-admin-password.txt
 
-RUN htpasswd -b -c /opt/htpasswd-admin admin "$(cat /opt/nginx_admin_password.txt)"
+RUN htpasswd -b -c /opt/htpasswd-admin admin "$(cat /opt/nginx-admin-password.txt)"

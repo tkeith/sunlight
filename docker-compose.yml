@@ -25,29 +25,27 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://app:app@mongo:27017/
       ME_CONFIG_SITE_BASEURL: "/mongo-express/"
 
-  server:
-    build: ./server
+  express:
+    build: ./express
     depends_on:
       - mongo
     restart: always
     volumes:
-      - ./server/src:/opt/server/src
+      - ./express/src:/opt/express/src
 
-  client:
-    build: ./client
-    depends_on:
-      - server
+  next:
+    build: ./next
     restart: always
     volumes:
-      - ./client/src:/opt/client/src
+      - ./next/src:/opt/next/src
 
   nginx:
     build:
       dockerfile: ../nginx/Dockerfile
       context: ./build
     depends_on:
-      - client
-      - server
+      - next
+      - express
     restart: always
     ports:
       - 8000:8000
