@@ -45,6 +45,9 @@ services:
     build:
       dockerfile: ../nginx/Dockerfile
       context: ./build
+    depends_on:
+      - client
+      - server
     restart: always
     ports:
       - 8000:8000

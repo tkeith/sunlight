@@ -8,4 +8,4 @@ RUN npm install
 
 WORKDIR /opt/client/src
 
-CMD ["npx", "next", "dev", "-p", "8082"]
+CMD ["npx", "next", "dev", "-p", "8001"]
