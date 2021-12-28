@@ -14,40 +14,27 @@ services:
     volumes:
       - mongo:/data/db
 
-  mongo-express:
-    image: mongo-express:0.54
-    depends_on:
-      - mongo
-    restart: always
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: app
-      ME_CONFIG_MONGODB_ADMINPASSWORD: app
-      ME_CONFIG_MONGODB_URL: mongodb://app:app@mongo:27017/
-      ME_CONFIG_SITE_BASEURL: "/mongo-express/"
-
   express:
-    build: ./express
+    build: ../express
     depends_on:
       - mongo
     restart: always
     volumes:
-      - ./express/src:/opt/express/src
+      - ../express/src:/opt/express/src
 
   next:
-    build: ./next
+    build: ../next
     restart: always
     volumes:
-      - ./next/src:/opt/next/src
+      - ../next/src:/opt/next/src
 
   nginx:
     build:
       dockerfile: ../nginx/Dockerfile
-      context: ./build
+      context: ../build
     depends_on:
       - next
       - express
     restart: always
     ports:
       - 8000:8000
-    env_file:
-      - ./build/nginx.env

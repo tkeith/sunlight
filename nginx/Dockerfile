@@ -4,7 +4,7 @@ RUN apt-get update \
   && apt-get install -y apache2-utils \
   && rm -rf /var/lib/apt/lists/*
 
-COPY ./nginx_app.conf /etc/nginx/conf.d/nginx_app.conf
+COPY ./nginx-app.conf /etc/nginx/conf.d/nginx-app.conf
 
 COPY ./nginx-admin-password.txt /opt/nginx-admin-password.txt
 
