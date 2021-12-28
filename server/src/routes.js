@@ -12,7 +12,9 @@ routes.route('/').get((req, res) => {
     .then(row =>
       res.json({ text: row?.text || "no data yet" })
     )
-    .catch((err) => { console.log(err) })
+    .catch(err =>
+      console.log(err)
+    )
 })
 
 routes.route('/save').post((req, res) => {
