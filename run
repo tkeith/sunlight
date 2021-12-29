@@ -17,13 +17,15 @@ MONGO_ENABLED = True
 CERTBOT_EMAIL = 'certbot-notifications@tk.co'
 
 def main():
+  global args, config
+
   proj_dir = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
 
   parser = argparse.ArgumentParser(description='run or deploy the application')
 
   parser.add_argument('config', type=str,
                       help='config filename')
-  parser.add_argument('command', type=str,
+  parser.add_argument('command', type=str, nargs='?', default=None,
                       help='command to run -- can be: fg, bg, stop, deploy, cli')
 
   args = parser.parse_args()
@@ -36,22 +38,24 @@ def main():
   if not os.path.exists(BUILD_PATH):
     os.mkdir(BUILD_PATH)
 
-  parse_config(config)
+  parse_config()
 
   print(f'docker-compose command: {compose_command}')
 
   config_nginx()
 
-  if args.command == 'fg':
+  if command == 'fg':
     docker_build()
     subprocess.call(compose_command + ['up'])
-  elif args.command == 'bg':
+  elif command == 'bg':
     docker_build()
     subprocess.call(compose_command + ['up', '-d'])
-  elif args.command == 'cli':
+  elif command == 'stop':
+    docker_down()
+  elif command == 'cli':
     docker_build()
     subprocess.call(compose_command + ['run', 'server', 'node'])
-  elif args.command in ['deploy', 'fg-remote']:
+  elif command in ['deploy', 'fg-remote']:
     if not host:
       raise Exception('host must be specified for deploy')
 
@@ -82,7 +86,7 @@ def main():
       f'root@{host}:/opt/{PROJECT_NAME}/',
     ])
 
-    if args.command == 'fg-remote':
+    if command == 'fg-remote':
       cmd = 'fg'
     else:
       cmd = 'bg'
@@ -102,14 +106,24 @@ def main():
       ''',
     ])
   else:
-    raise Exception(f'unknown command: {args.command}')
+    raise Exception(f'unknown command: {command}')
+
+def docker_down():
+  subprocess.call(compose_command + ['down'])
 
 def docker_build():
-  subprocess.call(compose_command + ['down'])
+  docker_down()
   subprocess.call(compose_command + ['build'])
 
-def parse_config(config):
-  global use_ssl, local, port, develop, admin_password, domain, compose_command, mongo_express_enabled, host
+def parse_config():
+  global use_ssl, local, port, develop, admin_password, domain, compose_command, mongo_express_enabled, host, command
+
+  if args.command:
+    command = args.command
+  else:
+    command = config.get('command')
+    if not command:
+      raise Exception('command required as CLI argument or in config file')
 
   compose_command = ['docker-compose', '-p', PROJECT_NAME]
 
