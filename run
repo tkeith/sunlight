@@ -42,24 +42,78 @@ def main():
 
   if args.command == 'fg':
     docker_build()
-    subprocess.call(['docker-compose'] + compose_configs + ['up'])
-
-  if args.command == 'cli':
+    subprocess.call(compose_command + ['up'])
+  elif args.command == 'bg':
     docker_build()
-    subprocess.call(['docker-compose'] + compose_configs + ['run', 'server', 'node'])
+    subprocess.call(compose_command + ['up', '-d'])
+  elif args.command == 'cli':
+    docker_build()
+    subprocess.call(compose_command + ['run', 'server', 'node'])
+  elif args.command in ['deploy', 'fg-remote']:
+    if not host:
+      raise Exception('host must be specified for deploy')
+
+    subprocess.call([
+      'rsync',
+      '-av',
+      '--delete-after',
+      '--exclude',
+      '.git',
+      '--exclude',
+      '/*.json',
+      '--exclude',
+      'node_modules',
+      '--exclude',
+      'build',
+      '--exclude',
+      '.vscode',
+      '--exclude',
+      '.next',
+      './',
+      f'root@{host}:/opt/{PROJECT_NAME}/',
+    ])
+
+    subprocess.call([
+      'rsync',
+      '-av',
+      args.config,
+      f'root@{host}:/opt/{PROJECT_NAME}/',
+    ])
+
+    if args.command == 'fg-remote':
+      cmd = 'fg'
+    else:
+      cmd = 'bg'
+
+    subprocess.call([
+      'ssh',
+      f'root@{host}',
+      f'''
+        if ! which docker; then
+          curl -fsSL https://get.docker.com | bash
+        fi
+        if ! which docker-compose; then
+          curl -L "https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+          chmod +x /usr/local/bin/docker-compose
+        fi
+        /opt/{PROJECT_NAME}/run /opt/{PROJECT_NAME}/{args.config} {cmd}
+      ''',
+    ])
+  else:
+    raise Exception(f'unknown command: {args.command}')
 
 def docker_build():
-  subprocess.call(['docker-compose'] + compose_configs + ['down'])
-  subprocess.call(['docker-compose'] + compose_configs + ['build'])
+  subprocess.call(compose_command + ['down'])
+  subprocess.call(compose_command + ['build'])
 
 def parse_config(config):
-  global use_ssl, local, port, develop, admin_password, domain, compose_configs, mongo_express_enabled
+  global use_ssl, local, port, develop, admin_password, domain, compose_command, mongo_express_enabled, host
 
-  compose_configs = []
+  compose_command = ['docker-compose', '-p', PROJECT_NAME]
 
   def add_compose_config(fn):
-    compose_configs.append('-f')
-    compose_configs.append(os.path.join('docker-compose', f'{fn}.yml'))
+    compose_command.append('-f')
+    compose_command.append(os.path.join('docker-compose', f'{fn}.yml'))
 
   add_compose_config('main')
 
@@ -77,11 +131,14 @@ def parse_config(config):
   if develop:
     add_compose_config('develop')
 
-  domain = config.get('domain')
+  host = config.get('host')
+  domain = config.get('domain', host)
   if domain:
     use_ssl = True
+    add_compose_config('with-ssl')
   else:
     use_ssl = False
+    add_compose_config('without-ssl')
     local = config.get('local', True)
     port = config.get('port', DEFAULT_PORT)
   admin_password = config.get('admin_password')

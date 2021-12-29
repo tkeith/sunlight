@@ -20,8 +20,6 @@ services:
     depends_on:
       - next
     restart: always
-    ports:
-      - 8000:8000
     volumes:
       - ../nginx/run:/opt/run
       - nginx_etc_letsencrypt:/etc/letsencrypt
