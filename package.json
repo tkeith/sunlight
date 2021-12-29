@@ -1,6 +1,5 @@
 {
   "name": "app",
-  "type": "commonjs",
   "private": true,
   "dependencies": {
     "mongodb": "^4.2.2",

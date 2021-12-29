@@ -1,38 +1,13 @@
 version: '3.8'
 
-volumes:
-
-  nginx_etc_letsencrypt: null
-
 services:
-
-  next:
-    build:
-      dockerfile: ./src/Dockerfile
-      context: ..
-    restart: always
-    volumes:
-      - ../src:/opt/app/src
-    command: bash -c 'echo "running next in prod mode" && cd next && npx next build && npx next start -p 8001'
-
-  worker:
-    build:
-      dockerfile: ./src/Dockerfile
-      context: ..
-    restart: always
-    volumes:
-      - ../src:/opt/app/src
-    command: bash -c 'echo "running worker" && cd worker && npx nodemon ./worker.js'
 
   nginx:
     build:
       dockerfile: ../nginx/Dockerfile
       context: ../build
-    depends_on:
-      - next
     restart: always
     volumes:
       - ../nginx/run:/opt/run
-      - nginx_etc_letsencrypt:/etc/letsencrypt
     env_file:
       - ../build/nginx.env

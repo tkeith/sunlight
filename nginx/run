@@ -17,7 +17,7 @@ nohup $(
   }
 
   setup_cert () {
-    while not certbot certonly -n --nginx -d "${CERTBOT_DOMAIN}" -m "${CERTBOT_EMAIL}" --agree-tos; do
+    while ! certbot certonly -n --nginx -d "${CERTBOT_DOMAIN}" -m "${CERTBOT_EMAIL}" --agree-tos; do
       echo 'failed to set up SSL cert; trying again in 1 minute'
       sleep 60
     done

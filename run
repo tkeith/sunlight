@@ -12,8 +12,10 @@ import textwrap
 PROJECT_NAME = 'fsjs'
 DEFAULT_PORT = 8000
 BUILD_PATH = 'build'
+NEXT_ENABLED = True
 EXPRESS_ENABLED = True
 MONGO_ENABLED = True
+WORKER_ENABLED = True
 CERTBOT_EMAIL = 'certbot-notifications@tk.co'
 
 def main():
@@ -65,6 +67,10 @@ def main():
       '--delete-after',
       '--exclude',
       '.git',
+      '--include',
+      '/package.json',
+      '--include',
+      '/package-lock.json',
       '--exclude',
       '/*.json',
       '--exclude',
@@ -95,7 +101,7 @@ def main():
       'ssh',
       f'root@{host}',
       f'''
-        if ! which docker; then
+        if ! which dockerd; then
           curl -fsSL https://get.docker.com | bash
         fi
         if ! which docker-compose; then
@@ -133,8 +139,14 @@ def parse_config():
 
   add_compose_config('main')
 
+  if NEXT_ENABLED:
+    add_compose_config('next')
+
   if EXPRESS_ENABLED:
     add_compose_config('express')
+
+  if WORKER_ENABLED:
+    add_compose_config('worker')
 
   if MONGO_ENABLED:
     add_compose_config('mongo')
@@ -144,8 +156,8 @@ def parse_config():
     add_compose_config('mongo-express')
 
   develop = config.get('develop', False)
-  if develop:
-    add_compose_config('develop')
+  if NEXT_ENABLED and develop:
+    add_compose_config('next-develop')
 
   host = config.get('host')
   domain = config.get('domain', host)
@@ -180,23 +192,26 @@ def config_nginx():
     proxy_send_timeout          300;
     proxy_read_timeout          300;
     send_timeout                300;
-
-    location / {{
-      proxy_pass http://next:8001/;
-
-      proxy_http_version 1.1;
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "upgrade";
-
-      proxy_set_header Host $host;
-      proxy_set_header X-Real-IP $remote_addr;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      proxy_set_header X-Forwarded-Proto $scheme;
-
-      proxy_buffering off;
-      proxy_redirect off;
-    }}
   ''')
+
+  if NEXT_ENABLED:
+    app_part += textwrap.dedent(f'''
+      location / {{
+        proxy_pass http://next:8001/;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_buffering off;
+        proxy_redirect off;
+      }}
+    ''')
 
   if EXPRESS_ENABLED:
     app_part += textwrap.dedent(f'''
