@@ -1,4 +1,4 @@
-# fsjs
+# Full-stack Javascript app template
 
 `fsjs` contains the essentials for a full-stack Javascript app:
 
