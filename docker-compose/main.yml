@@ -11,7 +11,7 @@ services:
     restart: always
     volumes:
       - ../next/src:/opt/next/src
-    command: bash -c 'npx next build && npx next start -p 8001'
+    command: bash -c 'echo "running next in prod mode" && npx next build && npx next start -p 8001'
 
   nginx:
     build:

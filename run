@@ -38,6 +38,8 @@ def main():
 
   parse_config(config)
 
+  print(f'docker-compose command: {compose_command}')
+
   config_nginx()
 
   if args.command == 'fg':

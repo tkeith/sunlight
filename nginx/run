@@ -2,20 +2,24 @@
 
 cd `dirname $0`
 
-$(
+nohup $(
+  setup_config () {
+    cp /opt/nginx-app.conf /etc/nginx/conf.d/nginx-app.conf
+    /etc/init.d/nginx reload
+  }
+
+  setup_cert () {
+    certbot certonly -n --nginx -d "${CERTBOT_DOMAIN}" -m "${CERTBOT_EMAIL}" --agree-tos && setup_config
+  }
+
   while true; do
-    nginx -g 'daemon off;'
-    sleep 1
+    if $USE_SSL; then
+      setup_cert
+    else
+      setup_config
+    fi
+    sleep 21600
   done
 ) &
 
-setup_cert () {
-  certbot certonly -n --nginx -d "${CERTBOT_DOMAIN}" -m "${CERTBOT_EMAIL}" --agree-tos && cp /opt/nginx-app.conf /etc/nginx/conf.d/nginx-app.conf && /etc/init.d/nginx reload
-}
-
-while true; do
-  if $USE_SSL; then
-    setup_cert
-  fi
-  sleep 21600
-done
+exec nginx -g 'daemon off;'

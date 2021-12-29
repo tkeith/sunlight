@@ -1,4 +1,4 @@
 services:
 
   next:
-    command: ["npx", "next", "dev", "-p", "8001"]
+    command: bash -c 'echo "running next in dev mode" && npx next dev -p 8001'
