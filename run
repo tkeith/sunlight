@@ -12,7 +12,7 @@ import textwrap
 PROJECT_NAME = 'tkfw2'
 DEFAULT_PORT = 8000
 BUILD_PATH = 'build'
-EXPRESS_ENABLED = False
+EXPRESS_ENABLED = True
 MONGO_ENABLED = True
 CERTBOT_EMAIL = 'certbot-notifications@tk.co'
 

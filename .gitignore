@@ -1,4 +1,7 @@
 .vscode
 .DS_Store
 build
-*.json
+/*.json
+!package.json
+!package-lock.json
+node_modules

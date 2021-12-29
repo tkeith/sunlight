@@ -7,11 +7,13 @@ volumes:
 services:
 
   next:
-    build: ../next
+    build:
+      dockerfile: ./src/Dockerfile
+      context: ..
     restart: always
     volumes:
-      - ../next/src:/opt/next/src
-    command: bash -c 'echo "running next in prod mode" && npx next build && npx next start -p 8001'
+      - ../src:/opt/app/src
+    command: bash -c 'echo "running next in prod mode" && cd next && npx next build && npx next start -p 8001'
 
   nginx:
     build:

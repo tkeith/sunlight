@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { getDb } from "./db.js"
+import { getDb } from "../lib/db.js"
 import { ObjectId } from "mongodb"
 
 export const routes = Router()
