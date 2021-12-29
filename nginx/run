@@ -5,18 +5,33 @@ cd `dirname $0`
 nohup $(
   setup_config () {
     cp /opt/nginx-app.conf /etc/nginx/conf.d/nginx-app.conf
+    rm /opt/nginx/conf.d/default.conf
     /etc/init.d/nginx reload
   }
 
-  setup_cert () {
-    certbot certonly -n --nginx -d "${CERTBOT_DOMAIN}" -m "${CERTBOT_EMAIL}" --agree-tos && setup_config
+  check_nginx () {
+    while not test $(curl -s -o /dev/null -w "%{http_code}" localhost/.nonexistent) -eq 404; do
+      echo 'nginx not ready; checking again in 1 second'
+      sleep 1
+    done
   }
+
+  setup_cert () {
+    while not certbot certonly -n --nginx -d "${CERTBOT_DOMAIN}" -m "${CERTBOT_EMAIL}" --agree-tos; do
+      echo 'failed to set up SSL cert; trying again in 1 minute'
+      sleep 60
+    done
+  }
+
+  check_nginx
+  if $USE_SSL; then
+    setup_cert
+    setup_config
+  fi
 
   while true; do
     if $USE_SSL; then
       setup_cert
-    else
-      setup_config
     fi
     sleep 21600
   done
