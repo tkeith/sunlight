@@ -9,7 +9,7 @@ import random
 import string
 import textwrap
 
-PROJECT_NAME = 'tkfw2'
+PROJECT_NAME = 'fsjs'
 DEFAULT_PORT = 8000
 BUILD_PATH = 'build'
 EXPRESS_ENABLED = True
