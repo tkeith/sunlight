@@ -16,13 +16,14 @@ Create a `local.json` file containing:
 {
   "develop": true,
   "mongo_express_enabled": true,
-  "admin_password": "test123"
+  "admin_password": "test123",
+  "command": "fg"
 }
 ```
 
 Ensure that recent versions of `docker` and `docker-compose` are installed.
 
-Run the app: `./run local.json fg`
+Run the app: `./run local.json`
 
 ## Deploy to a server
 
@@ -33,8 +34,9 @@ Create a `production.json` file containing:
 ```
 {
   "host": "some-host.com",
-  "admin_password": "test123"
+  "admin_password": "test123",
+  "command": "deploy"
 }
 ```
   
-Deploy: `./run production.json deploy`
+Deploy: `./run production.json`
