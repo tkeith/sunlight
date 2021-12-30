@@ -5,7 +5,7 @@ import { getText } from '../../lib/misc.js'
 
 export default function Home({ text }) {
   return (
-    <p>hello world. text: {text}</p>
+    <p className="text-3xl font-bold underline">hello world. text: {text}</p>
   )
 }
 
