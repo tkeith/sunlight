@@ -9,6 +9,6 @@ services:
       - ../src:/opt/app/src
     command: bash -c 'echo "running next in prod mode" && cd next && npx next build && npx next start -p 8001'
 
-  nginx:
-    depends_on:
-      - next
+  # nginx:
+  #   depends_on:
+  #     - next

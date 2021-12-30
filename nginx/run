@@ -5,7 +5,12 @@ cd `dirname $0`
 nohup $(
   setup_config () {
     cp /opt/nginx-app.conf /etc/nginx/conf.d/nginx-app.conf
-    rm /opt/nginx/conf.d/default.conf
+    rm /etc/nginx/conf.d/default.conf
+    # wait for proxy targets to become available
+    while ! nginx -t; do
+      echo 'nginx config not yet valid; checking again in 1 second'
+      sleep 1
+    done
     /etc/init.d/nginx reload
   }
 

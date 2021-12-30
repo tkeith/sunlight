@@ -11,6 +11,6 @@ services:
       ME_CONFIG_MONGODB_URL: mongodb://app:app@mongo:27017/
       ME_CONFIG_SITE_BASEURL: "/mongo-express/"
 
-  nginx:
-    depends_on:
-      - mongo_express
+  # nginx:
+  #   depends_on:
+  #     - mongo_express

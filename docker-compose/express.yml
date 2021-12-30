@@ -9,6 +9,6 @@ services:
       - ../src:/opt/app/src
     command: bash -c 'echo "running express" && cd express && npx nodemon ./server.js'
 
-  nginx:
-    depends_on:
-      - express
+  # nginx:
+  #   depends_on:
+  #     - express
