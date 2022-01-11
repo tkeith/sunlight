@@ -57,6 +57,36 @@ def main():
   elif command == 'cli':
     docker_build()
     subprocess.call(compose_command + ['run', 'server', 'node'])
+  elif command == 'install':
+    service_config = textwrap.dedent(f'''
+      [Service]
+      User=root
+      WorkingDirectory={proj_dir}
+      ExecStart={proj_dir}/run {args.config} fg
+      ExecStop={proj_dir}/run {args.config} stop
+      Restart=on-failure
+      RestartSec=5
+
+      [Unit]
+      Description={PROJECT_NAME}
+      Requires=docker.service
+      After=docker.service
+      StartLimitIntervalSec=300
+      StartLimitBurst=10
+
+      [Install]
+      WantedBy=multi-user.target
+    ''')
+    with open(f'/etc/systemd/system/{PROJECT_NAME}.service', 'w') as f:
+      f.write(service_config)
+
+    subprocess.call([
+      'bash', '-c',
+      textwrap.dedent(f'''
+        systemctl daemon-reload
+        systemctl restart {PROJECT_NAME}
+      ''')
+    ])
   elif command in ['deploy', 'fg-remote']:
     if not host:
       raise Exception('host must be specified for deploy')
@@ -95,7 +125,7 @@ def main():
     if command == 'fg-remote':
       cmd = 'fg'
     else:
-      cmd = 'bg'
+      cmd = 'install'
 
     subprocess.call([
       'ssh',

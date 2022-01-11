@@ -38,7 +38,7 @@ Create a `production.json` file containing:
   "command": "deploy"
 }
 ```
-  
+
 Deploy: `./run production.json`
 
 ## Commands
@@ -48,6 +48,7 @@ Deploy: `./run production.json`
 - `stop` - stop the application
 - `cli` - run a Javascript REPL environment
 - `deploy` - deploy to a remote server
+- `install` - install the application by setting up a systemd service
 - `fg-remote` - deploy to a remote server and show the logs in the foreground
 
 ## Configuration options
