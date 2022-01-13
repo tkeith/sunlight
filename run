@@ -48,10 +48,10 @@ def main():
 
   if command == 'fg':
     docker_build()
-    subprocess.call(compose_command + ['up'])
+    subprocess.call(compose_command + ['up', '--remove-orphans'])
   elif command == 'bg':
     docker_build()
-    subprocess.call(compose_command + ['up', '-d'])
+    subprocess.call(compose_command + ['up', '-d', '--remove-orphans'])
   elif command == 'stop':
     docker_down()
   elif command == 'cli':
@@ -145,11 +145,11 @@ def main():
     raise Exception(f'unknown command: {command}')
 
 def docker_down():
-  subprocess.call(compose_command + ['down'])
+  subprocess.call(compose_command + ['down', '--remove-orphans'])
 
 def docker_build():
   docker_down()
-  subprocess.call(compose_command + ['build'])
+  subprocess.call(compose_command + ['build', '--remove-orphans'])
 
 def parse_config():
   global use_ssl, local, port, develop, admin_password, domain, compose_command, mongo_express_enabled, host, command
