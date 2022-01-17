@@ -4,4 +4,5 @@ build
 /*.json
 !package.json
 !package-lock.json
+!cypress.json
 node_modules
