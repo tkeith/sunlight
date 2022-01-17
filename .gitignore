@@ -1,8 +1,5 @@
 .vscode
 .DS_Store
 build
-/*.json
-!package.json
-!package-lock.json
-!cypress.json
+/*.conf.json
 node_modules

@@ -10,7 +10,7 @@
 
 ## Local development
 
-Create a `local.json` file containing:
+Create a `local.conf.json` file containing:
 
 ```
 {
@@ -23,13 +23,13 @@ Create a `local.json` file containing:
 
 Ensure that recent versions of `docker` and `docker-compose` are installed.
 
-Run the app: `./run local.json`
+Run the app: `./run local.conf.json`
 
 ## Deploy to a server
 
 The server should be running Linux. `docker` and `docker-compose` will be automatically installed if not already present. You should have SSH access to the server.
 
-Create a `production.json` file containing:
+Create a `production.conf.json` file containing:
 
 ```
 {
@@ -39,7 +39,7 @@ Create a `production.json` file containing:
 }
 ```
 
-Deploy: `./run production.json`
+Deploy: `./run production.conf.json`
 
 ## Commands
 
