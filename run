@@ -47,16 +47,19 @@ def main():
   config_nginx()
 
   if command == 'fg':
-    docker_build()
-    subprocess.call(compose_command + ['up', '--remove-orphans'])
+    docker_down()
+    # docker_build() # `docker-compose up` automatically builds
+    docker_compose_call(['up', '--remove-orphans'])
   elif command == 'bg':
-    docker_build()
-    subprocess.call(compose_command + ['up', '-d', '--remove-orphans'])
+    docker_down()
+    # docker_build() # `docker-compose up` automatically builds
+    docker_compose_call(['up', '-d', '--remove-orphans'])
   elif command == 'stop':
     docker_down()
   elif command == 'cli':
+    docker_down()
     docker_build()
-    subprocess.call(compose_command + ['run', 'server', 'node'])
+    docker_compose_call(['run', 'server', 'node'])
   elif command == 'install':
     service_config = textwrap.dedent(f'''
       [Service]
@@ -144,12 +147,16 @@ def main():
   else:
     raise Exception(f'unknown command: {command}')
 
+def docker_compose_call(args):
+  cmd = compose_command + args
+  print(f'docker_compose_call: {cmd}')
+  subprocess.call(cmd)
+
 def docker_down():
-  subprocess.call(compose_command + ['down', '--remove-orphans'])
+  docker_compose_call(['down', '--remove-orphans'])
 
 def docker_build():
-  docker_down()
-  subprocess.call(compose_command + ['build', '--remove-orphans'])
+  docker_compose_call(['build'])
 
 def parse_config():
   global use_ssl, local, port, develop, admin_password, domain, compose_command, mongo_express_enabled, host, command
