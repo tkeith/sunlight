@@ -2,6 +2,7 @@
   "name": "app",
   "private": true,
   "dependencies": {
+    "@usedapp/core": "^0.10.0",
     "cors": "^2.8.5",
     "cypress": "^9.2.1",
     "dotenv": "^10.0.0",
