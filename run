@@ -48,11 +48,11 @@ def main():
 
   if command == 'fg':
     docker_down()
-    # docker_build() # `docker-compose up` automatically builds
+    docker_build()
     docker_compose_call(['up', '--remove-orphans'])
   elif command == 'bg':
     docker_down()
-    # docker_build() # `docker-compose up` automatically builds
+    docker_build()
     docker_compose_call(['up', '-d', '--remove-orphans'])
   elif command == 'stop':
     docker_down()
