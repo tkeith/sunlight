@@ -83,7 +83,7 @@ def main():
     with open(f'/etc/systemd/system/{PROJECT_NAME}.service', 'w') as f:
       f.write(service_config)
 
-    subprocess.call([
+    run([
       'bash', '-c',
       textwrap.dedent(f'''
         systemctl daemon-reload
@@ -94,7 +94,7 @@ def main():
     if not host:
       raise Exception('host must be specified for deploy')
 
-    subprocess.call([
+    run([
       'rsync',
       '-av',
       '--delete-after',
@@ -118,7 +118,7 @@ def main():
       f'root@{host}:/opt/{PROJECT_NAME}/',
     ])
 
-    subprocess.call([
+    run([
       'rsync',
       '-av',
       args.config,
@@ -130,7 +130,7 @@ def main():
     else:
       cmd = 'install'
 
-    subprocess.call([
+    run([
       'ssh',
       f'root@{host}',
       f'''
@@ -147,10 +147,13 @@ def main():
   else:
     raise Exception(f'unknown command: {command}')
 
+def run(cmd):
+  subprocess.run(cmd, check=True)
+
 def docker_compose_call(args):
   cmd = compose_command + args
   print(f'docker_compose_call: {cmd}')
-  subprocess.call(cmd)
+  run(cmd)
 
 def docker_down():
   docker_compose_call(['down', '--remove-orphans'])
