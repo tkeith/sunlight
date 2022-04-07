@@ -1,12 +1,13 @@
-# Full-stack Javascript app template
+# dApp app template
 
-This repo contains the essentials for a full-stack Javascript app:
+This repo contains the essentials for a dApp (Web3 decentralized app):
 
-- Next.js for pages
+- React/Next.js for the frontend
 - Express.js for the API
 - MongoDB for data storage
 - `mongo-express` to view the database as an administrator
 - Nginx to serve everything over SSL using a LetsEncrypt certificate
+- Docker to tie it all together
 
 ## Local development
 
