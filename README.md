@@ -1,4 +1,4 @@
-# dApp app template
+# dApp framework
 
 This repo contains the essentials for a dApp (Web3 decentralized app):
 
