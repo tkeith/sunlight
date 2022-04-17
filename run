@@ -59,7 +59,7 @@ def main():
   elif command == 'cli':
     docker_down()
     docker_build()
-    docker_compose_call(['run', 'server', 'node'])
+    docker_compose_call(['run', 'worker', 'node'])
   elif command == 'install':
     service_config = textwrap.dedent(f'''
       [Service]
