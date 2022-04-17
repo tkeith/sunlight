@@ -9,7 +9,7 @@ import random
 import string
 import textwrap
 
-PROJECT_NAME = 'fsjs'
+PROJECT_NAME = 'dapp-framework'
 DEFAULT_PORT = 8000
 BUILD_PATH = 'build'
 NEXT_ENABLED = True
