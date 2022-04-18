@@ -13,6 +13,6 @@ services:
     volumes:
       - mongo:/data/db
 
-  next:
-    depends_on:
-      - mongo
+  # next:
+  #   depends_on:
+  #     - mongo

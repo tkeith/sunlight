@@ -2,8 +2,8 @@ services:
 
   mongo-express:
     image: mongo-express:0.54
-    depends_on:
-      - mongo
+    # depends_on:
+    #   - mongo
     restart: always
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: app
