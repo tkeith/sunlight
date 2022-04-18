@@ -2,8 +2,7 @@ services:
 
   express:
     build:
-      dockerfile: ./src/Dockerfile
-      context: ..
+      context: ../docker-contexts/node
     restart: always
     volumes:
       - ../src:/opt/app/src

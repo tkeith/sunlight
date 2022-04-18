@@ -15,7 +15,7 @@ BUILD_PATH = 'build'
 NEXT_ENABLED = True
 EXPRESS_ENABLED = True
 MONGO_ENABLED = True
-WORKER_ENABLED = True
+WORKER_ENABLED = True # changing this to False will break the CLI (bash & node) functionality, since it uses the worker image
 CERTBOT_EMAIL = 'certbot-notifications@tk.co'
 
 DOCKER_INSTALL_SCRIPT = '''
