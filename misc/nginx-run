@@ -28,6 +28,7 @@ nohup $(
     done
   }
 
+  htpasswd -b -c /opt/htpasswd-admin admin "$(cat /opt/nginx-admin-password.txt)"
   check_nginx
   if $USE_SSL; then
     setup_cert

@@ -8,10 +8,11 @@ services:
 
   nginx:
     build:
-      dockerfile: ../nginx/Dockerfile
-      context: ../build
+      context: ../docker-contexts/nginx
     restart: always
     volumes:
-      - ../nginx/run:/opt/run
+      - ../misc/nginx-run:/opt/run
+      - ../build/nginx-app.conf:/opt/nginx-app.conf
+      - ../build/nginx-admin-password.txt:/opt/nginx-admin-password.txt
     env_file:
       - ../build/nginx.env
