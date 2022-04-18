@@ -18,6 +18,16 @@ MONGO_ENABLED = True
 WORKER_ENABLED = True
 CERTBOT_EMAIL = 'certbot-notifications@tk.co'
 
+DOCKER_INSTALL_SCRIPT = '''
+  if ! which dockerd; then
+    curl -fsSL https://get.docker.com | bash
+  fi
+  if ! which docker-compose; then
+    curl -L "https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+    chmod +x /usr/local/bin/docker-compose
+  fi
+'''
+
 def main():
   global args, config
 
@@ -47,19 +57,21 @@ def main():
   config_nginx()
 
   if command == 'fg':
-    docker_down()
-    docker_build()
+    docker_prep()
     docker_compose_call(['up', '--remove-orphans'])
   elif command == 'bg':
-    docker_down()
-    docker_build()
+    docker_prep()
     docker_compose_call(['up', '-d', '--remove-orphans'])
   elif command == 'stop':
     docker_down()
-  elif command == 'cli':
-    docker_down()
-    docker_build()
-    docker_compose_call(['run', 'worker', 'node'])
+  elif command == 'bash':
+    docker_prep_if_down()
+    docker_compose_call(['run', '-it', 'worker', 'bash'])
+  elif command == 'node':
+    docker_prep_if_down()
+    docker_compose_call(['run', '-it', 'worker', 'node'])
+  elif command == 'install-docker':
+    run(['bash', '-c', DOCKER_INSTALL_SCRIPT])
   elif command == 'install':
     service_config = textwrap.dedent(f'''
       [Service]
@@ -134,32 +146,37 @@ def main():
       'ssh',
       f'root@{host}',
       f'''
-        if ! which dockerd; then
-          curl -fsSL https://get.docker.com | bash
-        fi
-        if ! which docker-compose; then
-          curl -L "https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
-          chmod +x /usr/local/bin/docker-compose
-        fi
+        {DOCKER_INSTALL_SCRIPT}
         /opt/{PROJECT_NAME}/run /opt/{PROJECT_NAME}/{args.config} {cmd}
       ''',
     ])
   else:
     raise Exception(f'unknown command: {command}')
 
-def run(cmd):
-  subprocess.run(cmd, check=True)
+def run(cmd, get_output=False):
+  return subprocess.run(cmd, check=True, capture_output=get_output, text=get_output)
 
-def docker_compose_call(args):
+def docker_compose_call(args, get_output=False):
   cmd = compose_command + args
   print(f'docker_compose_call: {cmd}')
-  run(cmd)
+  return run(cmd, get_output=get_output)
 
 def docker_down():
   docker_compose_call(['down', '--remove-orphans'])
 
 def docker_build():
   docker_compose_call(['build'])
+
+def docker_prep():
+  docker_down()
+  docker_build()
+
+def docker_prep_if_down():
+  if not docker_is_up():
+    docker_prep()
+
+def docker_is_up():
+  return len(docker_compose_call(['top'], get_output=True).stdout.strip()) > 0
 
 def parse_config():
   global use_ssl, local, port, develop, admin_password, domain, compose_command, mongo_express_enabled, host, command
