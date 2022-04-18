@@ -2,7 +2,7 @@ import { MongoClient } from "mongodb"
 
 var _db
 
-export const getDb = () => new Promise((approve, reject) => {
+const getDb = () => new Promise((approve, reject) => {
   if (_db) {
     approve(_db)
   }
@@ -16,3 +16,5 @@ export const getDb = () => new Promise((approve, reject) => {
     }
   })
 })
+
+export default getDb

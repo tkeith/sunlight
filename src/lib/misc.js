@@ -1,6 +1,6 @@
-import { getDb } from "./db"
+import getDb from "./db.js"
 
-export async function getText() {
+export async function getTextOld() {
   return await getDb()
     .then(db =>
       db.collection('test').findOne({})
@@ -11,4 +11,12 @@ export async function getText() {
     .catch(err =>
       console.log(err)
     )
+}
+
+export const getText = async () => {
+  const db = await getDb()
+  const row = await db.collection('test').findOne({})
+  console.log(row)
+  const text = row?.text || "no data yet"
+  return text
 }

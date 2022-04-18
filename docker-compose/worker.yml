@@ -5,8 +5,9 @@ services:
       context: ../docker-contexts/node
     restart: always
     volumes:
+      - ../build/config.json:/opt/config.json
       - ../src:/opt/app/src
       - ../package.json:/opt/app/package.json
       - ../package-lock.json:/opt/app/package-lock.json
       - node_modules:/opt/app/node_modules
-    command: bash -c 'src/scripts/setup_node_container && echo "running worker" && cd src/worker && npx nodemon ./worker.js'
+    command: bash -c 'src/scripts/setup_node_container && echo "running worker" && cd src/worker && npx nodemon --watch .. ./worker.js'

@@ -1,20 +1,13 @@
 import { Router } from "express"
-import { getDb } from "../lib/db.js"
+import getDb from "../lib/db.js"
 import { ObjectId } from "mongodb"
+import getConfig from "../lib/config.js"
+import { getText } from '../lib/misc.js'
 
 export const routes = Router()
 
-routes.route('/').get((req, res) => {
-  getDb()
-    .then(db =>
-      db.collection('test').findOne({})
-    )
-    .then(row =>
-      res.json({ text: row?.text || "no data yet" })
-    )
-    .catch(err =>
-      console.log(err)
-    )
+routes.route('/').get(async (req, res) => {
+  res.json({ text: await getText() })
 })
 
 routes.route('/save').post((req, res) => {
@@ -28,6 +21,11 @@ routes.route('/save').post((req, res) => {
     .then(() =>
       res.json()
     )
+})
+
+routes.route('/is_mongo_express_enabled').get(async (req, res) => {
+  const cfg = await getConfig()
+  res.json(cfg.mongo_express_enabled)
 })
 
 export default routes

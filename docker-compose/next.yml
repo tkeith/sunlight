@@ -5,6 +5,7 @@ services:
       context: ../docker-contexts/node
     restart: always
     volumes:
+      - ../build/config.json:/opt/config.json
       - ../src:/opt/app/src
       - ../package.json:/opt/app/package.json
       - ../package-lock.json:/opt/app/package-lock.json
