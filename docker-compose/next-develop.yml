@@ -1,4 +1,4 @@
 services:
 
   next:
-    command: bash -c 'echo "running next in dev mode" && cd next && npx next dev -p 8001'
+    command: bash -c 'src/scripts/setup_node_container && echo "running next in dev mode" && cd src/next && npx next dev -p 8001'

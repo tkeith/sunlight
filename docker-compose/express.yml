@@ -7,7 +7,10 @@ services:
     restart: always
     volumes:
       - ../src:/opt/app/src
-    command: bash -c 'echo "running express" && cd express && npx nodemon ./server.js'
+      - ../package.json:/opt/app/package.json
+      - ../package-lock.json:/opt/app/package-lock.json
+      - node_modules:/opt/app/node_modules
+    command: bash -c 'src/scripts/setup_node_container && echo "running express" && cd src/express && npx nodemon ./server.js'
 
   # nginx:
   #   depends_on:

@@ -66,10 +66,10 @@ def main():
     docker_down()
   elif command == 'bash':
     docker_prep_if_down()
-    docker_compose_call(['run', '-it', 'worker', 'bash'])
+    docker_compose_call(['run', '-it', 'worker', 'bash', '-c', 'src/scripts/setup_node_container; bash'])
   elif command == 'node':
     docker_prep_if_down()
-    docker_compose_call(['run', '-it', 'worker', 'node'])
+    docker_compose_call(['run', '-it', 'worker', 'bash', '-c', 'src/scripts/setup_node_container; node'])
   elif command == 'install-docker':
     run(['bash', '-c', DOCKER_INSTALL_SCRIPT])
   elif command == 'install':
@@ -176,7 +176,11 @@ def docker_prep_if_down():
     docker_prep()
 
 def docker_is_up():
-  return len(docker_compose_call(['top'], get_output=True).stdout.strip()) > 0
+  try:
+    return len(docker_compose_call(['top'], get_output=True).stdout.strip()) > 0
+  except:
+    docker_compose_call(['top'])
+    raise
 
 def parse_config():
   global use_ssl, local, port, develop, admin_password, domain, compose_command, mongo_express_enabled, host, command

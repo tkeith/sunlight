@@ -7,4 +7,7 @@ services:
     restart: always
     volumes:
       - ../src:/opt/app/src
-    command: bash -c 'echo "running worker" && cd worker && npx nodemon ./worker.js'
+      - ../package.json:/opt/app/package.json
+      - ../package-lock.json:/opt/app/package-lock.json
+      - node_modules:/opt/app/node_modules
+    command: bash -c 'src/scripts/setup_node_container && echo "running worker" && cd src/worker && npx nodemon ./worker.js'
