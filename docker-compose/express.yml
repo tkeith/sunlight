@@ -15,3 +15,4 @@ services:
   # nginx:
   #   depends_on:
   #     - express
+  # this dependency is not used, since the nginx container will repeatedly restart until the `express` hostname resolves
