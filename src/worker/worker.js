@@ -1,3 +1,3 @@
 setInterval(() => {
   console.log('hello from worker')
-}, 5000)
+}, 600000)
