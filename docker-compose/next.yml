@@ -9,8 +9,9 @@ services:
       - ../src:/opt/app/src
       - ../package.json:/opt/app/package.json
       - ../package-lock.json:/opt/app/package-lock.json
+      - ../misc:/opt/app/misc
       - node_modules:/opt/app/node_modules
-    command: bash -c 'src/scripts/setup_node_container && echo "running next in prod mode" && cd src/next && npx next build && npx next start -p 8001'
+    command: bash -c 'misc/setup_node_container && echo "running next in prod mode" && cd src/next && npx next build && npx next start -p 8001'
 
   # nginx:
   #   depends_on:

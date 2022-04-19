@@ -1,7 +1,7 @@
 import { Ropsten, DAppProvider, useEtherBalance, useEthers, Config } from '@usedapp/core'
 import { formatEther } from '@ethersproject/units'
 
-export default function dappPage() {
+export default function DAppPage() {
   const { activateBrowserWallet, account } = useEthers()
   const etherBalance = useEtherBalance(account)
   return (
