@@ -10,17 +10,13 @@ routes.route('/').get(async (req, res) => {
   res.json({ text: await getText() })
 })
 
-routes.route('/save').post((req, res) => {
-  getDb()
-    .then(db =>
-      db.collection('test').updateOne(
-        {},
-        { $set: { text: req.body.text } },
-        { upsert: true, })
-    )
-    .then(() =>
-      res.json()
-    )
+routes.route('/save').post(async (req, res) => {
+  let db = await getDb()
+  await db.collection('test').updateOne(
+    {},
+    { $set: { text: req.body.text } },
+    { upsert: true, })
+  res.json()
 })
 
 routes.route('/is_mongo_express_enabled').get(async (req, res) => {
