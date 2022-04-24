@@ -73,7 +73,7 @@ def main():
   elif command == 'node':
     docker_prep_if_down()
     # docker_compose_call(['run', 'worker', 'bash', '-c', 'misc/setup_node_container; node'])
-    docker_compose_call(['run', 'worker', 'bash', '-c', 'node'])
+    docker_compose_call(['run', 'worker', 'bash', '-c', 'cd src; node'])
   elif command == 'install-docker':
     run(['bash', '-c', DOCKER_INSTALL_SCRIPT])
   elif command == 'install':

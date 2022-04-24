@@ -1,15 +1,18 @@
 import { promises } from 'fs'
 
-var _config
-
-const getConfig = async () => {
-  if (_config) {
-    await _config
-  }
+const reacConfig = async () => {
   const data = await promises.readFile('/opt/config.json')
-  _config = JSON.parse(data)
-  console.log(_config)
-  return _config
+  const cfg = JSON.parse(data)
+  return cfg
+}
+
+let cfgPromise
+
+const getConfig = () => {
+  if (!cfgPromise) {
+    cfgPromise = reacConfig()
+  }
+  return cfgPromise
 }
 
 export default getConfig
