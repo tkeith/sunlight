@@ -1,4 +1,4 @@
-import { Ropsten, DAppProvider, useEtherBalance, useEthers, Config } from '@usedapp/core'
+import { useEtherBalance, useEthers } from '@usedapp/core'
 import { formatEther } from '@ethersproject/units'
 
 export default function DAppPage() {

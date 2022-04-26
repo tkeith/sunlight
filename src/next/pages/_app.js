@@ -1,6 +1,5 @@
 import '../styles/globals.css'
 import { Ropsten, DAppProvider, useEtherBalance, useEthers, Config } from '@usedapp/core'
-import { formatEther } from '@ethersproject/units'
 
 const dappConfig = {
   readOnlyChainId: Ropsten.chainId,
