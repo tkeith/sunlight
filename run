@@ -235,6 +235,9 @@ def parse_config():
   if MONGO_ENABLED:
     add_compose_config('mongo')
 
+    if config.get('mongo_exposed_localhost', False):
+      add_compose_config('mongo-exposed-localhost')
+
   mongo_express_enabled = config.get('mongo_express_enabled', False)
   if mongo_express_enabled:
     add_compose_config('mongo-express')
