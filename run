@@ -111,6 +111,14 @@ def main():
       raise Exception('host must be specified for deploy')
 
     run([
+      'ssh',
+      f'root@{host}',
+      f'''
+        systemctl stop {PROJECT_NAME} || true
+      ''',
+    ])
+
+    run([
       'rsync',
       '-av',
       '--delete-after',
