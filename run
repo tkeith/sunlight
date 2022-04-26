@@ -66,6 +66,8 @@ def main():
     docker_compose_call(['up', '-d', '--remove-orphans'])
   elif command == 'stop':
     docker_down()
+  elif command == 'logs':
+    docker_compose_call(['logs', '-f'])
   elif command == 'bash':
     docker_prep_if_down()
     # docker_compose_call(['run', 'worker', 'bash', '-c', 'misc/setup_node_container; bash'])
@@ -106,6 +108,14 @@ def main():
         systemctl restart {PROJECT_NAME}
       ''')
     ])
+  elif command == 'logs-remote':
+    run([
+      'ssh',
+      f'root@{host}',
+      f'''
+        /opt/{PROJECT_NAME}/run /opt/{PROJECT_NAME}/{args.config} logs
+      ''',
+    ])
   elif command in ['deploy', 'fg-remote']:
     if not host:
       raise Exception('host must be specified for deploy')
@@ -115,6 +125,7 @@ def main():
       f'root@{host}',
       f'''
         systemctl stop {PROJECT_NAME} || true
+        /opt/{PROJECT_NAME}/run /opt/{PROJECT_NAME}/{args.config} stop
       ''',
     ])
 
