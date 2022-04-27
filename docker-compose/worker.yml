@@ -3,7 +3,7 @@ services:
   worker:
     build:
       context: ../docker-contexts/node
-    restart: always
+    restart: on-failure
     volumes:
       - ../build/config.json:/opt/config.json
       - ../src:/opt/app/src

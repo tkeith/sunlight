@@ -9,7 +9,7 @@ services:
   nginx:
     build:
       context: ../docker-contexts/nginx
-    restart: always
+    restart: on-failure
     volumes:
       - ../misc/nginx-run:/opt/run
       - ../build/nginx-app.conf:/opt/nginx-app.conf

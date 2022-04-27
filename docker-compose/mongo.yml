@@ -6,7 +6,7 @@ services:
 
   mongo:
     image: mongo:5.0.5
-    restart: always
+    restart: on-failure
     environment:
       MONGO_INITDB_ROOT_USERNAME: app
       MONGO_INITDB_ROOT_PASSWORD: app
