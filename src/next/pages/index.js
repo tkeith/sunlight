@@ -3,19 +3,14 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { getText } from '../../lib/misc.js'
 import Router from 'next/router'
+import axios from 'axios'
 
 function Form({ startingText }) {
   const saveText = async event => {
     event.preventDefault()
 
-    const res = await fetch('/express/save', {
-      body: JSON.stringify({
-        text: event.target.text.value
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: 'POST'
+    const res = await axios.post('/express/save', {
+      text: event.target.text.value
     })
 
     Router.reload()
