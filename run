@@ -66,6 +66,8 @@ def main():
     docker_compose_call(['up', '-d', '--remove-orphans'])
   elif command == 'stop':
     docker_down()
+  elif command == 'clear-data':
+    docker_clear_data()
   elif command == 'logs':
     docker_compose_call(['logs', '-f'])
   elif command == 'bash':
@@ -186,6 +188,9 @@ def docker_compose_call(args, get_output=False):
 
 def docker_down():
   docker_compose_call(['down', '--remove-orphans'])
+
+def docker_clear_data():
+  docker_compose_call(['down', '--remove-orphans', '--volumes'])
 
 def docker_build():
   docker_compose_call(['build'])
