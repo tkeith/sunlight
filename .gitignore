@@ -3,3 +3,4 @@
 build
 /*.conf.json
 node_modules
+*.ipynb

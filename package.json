@@ -11,7 +11,8 @@
     "next": "12.1.5",
     "nodemon": "^2.0.15",
     "react": "18.0.0",
-    "react-dom": "18.0.0"
+    "react-dom": "18.0.0",
+    "tslab": "^1.0.15"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.5",
