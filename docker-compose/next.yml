@@ -3,7 +3,7 @@ services:
   next:
     build:
       context: ../docker-contexts/node
-    restart: on-failure
+    restart: "no"
     volumes:
       - ../build/config.json:/opt/config.json
       - ../src:/opt/app/src

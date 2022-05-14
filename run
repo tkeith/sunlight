@@ -178,16 +178,16 @@ def main():
   else:
     raise Exception(f'unknown command: {command}')
 
-def run(cmd, get_output=False):
-  return subprocess.run(cmd, check=True, capture_output=get_output, text=get_output)
+def run(cmd, get_output=False, ignore_error=False):
+  return subprocess.run(cmd, check=not ignore_error, capture_output=get_output, text=get_output)
 
-def docker_compose_call(args, get_output=False):
+def docker_compose_call(args, get_output=False, ignore_error=False):
   cmd = compose_command + args
   print(f'docker_compose_call: {cmd}')
-  return run(cmd, get_output=get_output)
+  return run(cmd, get_output=get_output, ignore_error=ignore_error)
 
 def docker_down():
-  docker_compose_call(['down', '--remove-orphans'])
+  docker_compose_call(['down', '--remove-orphans'], ignore_error=True)
 
 def docker_clear_data():
   docker_compose_call(['down', '--remove-orphans', '--volumes'])
