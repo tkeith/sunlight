@@ -8,7 +8,7 @@ function Form({ startingText }) {
   const saveText = async event => {
     event.preventDefault()
 
-    const res = await axios.post('/express/save', {
+    await axios.post('/express/examples/saveText', {
       text: event.target.text.value
     })
 

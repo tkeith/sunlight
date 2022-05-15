@@ -3,10 +3,10 @@ import getDb from "./db.js"
 export async function getTextOld() {
   return await getDb()
     .then(db =>
-      db.collection('test').findOne({})
+      db.collection('example').findOne({})
     )
     .then(row =>
-      row?.text || "no data yet"
+      row?.text || ""
     )
     .catch(err =>
       console.log(err)
@@ -15,8 +15,8 @@ export async function getTextOld() {
 
 export const getText = async () => {
   const db = await getDb()
-  const row = await db.collection('test').findOne({})
+  const row = await db.collection('example').findOne({})
   console.log(row)
-  const text = row?.text || "no data yet"
+  const text = row?.text || ""
   return text
 }

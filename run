@@ -9,6 +9,8 @@ import random
 import string
 import textwrap
 from sys import argv
+import http.client
+import time
 
 PROJECT_NAME = 'dapp-framework'
 DEFAULT_PORT = 8000
@@ -64,8 +66,7 @@ def main():
     docker_prep()
     docker_compose_call(['up', '--remove-orphans'])
   elif command == 'bg':
-    docker_prep()
-    docker_compose_call(['up', '-d', '--remove-orphans'])
+    bg()
   elif command == 'stop':
     docker_down()
   elif command == 'clear-data':
@@ -80,8 +81,11 @@ def main():
     docker_prep_if_down()
     # docker_compose_call(['run', 'worker', 'bash', '-c', 'misc/setup_node_container; node'])
     docker_compose_call(['run', 'worker', 'bash', '-c', 'cd src; node'])
+  elif command == 'test-host':
+    do_test(where='host')
+  elif command == 'test':
+    do_test(where='docker')
   elif command == 'compose-call':
-    print('DEBUG 1')
     docker_compose_call(args.command_args)
   elif command == 'install-docker':
     run(['bash', '-c', DOCKER_INSTALL_SCRIPT])
@@ -183,11 +187,59 @@ def main():
   else:
     raise Exception(f'unknown command: {command}')
 
+def do_test(where):
+  out = run(['docker-compose', '-p', PROJECT_NAME, 'ps'], get_output=True).stdout
+  if 'nginx' in out and 'running' in out:
+    already_running = True
+  else:
+    already_running = False
+
+  if not already_running:
+    bg()
+
+  def check_running():
+    try:
+      conn = http.client.HTTPConnection('localhost:8000')
+      conn.request("GET", '/_alive')
+      if conn.getresponse().status == 200:
+        return True
+      else:
+        return False
+    except Exception:
+      return False
+
+  if not check_running():
+    print('application not yet running, waiting for it to start...')
+    running_check_start_time = time.time()
+    while True:
+      time.sleep(0.25)
+      if check_running():
+        print('application is now running! launching test')
+        break
+      if time.time() - running_check_start_time > 120:
+        raise Exception('application took too long to start')
+
+  try:
+    if where == 'docker':
+      run(['docker-compose', '-p', PROJECT_NAME, '-f', 'docker-compose/test.yml', 'build'])
+      run(['docker-compose', '-p', PROJECT_NAME, '-f', 'docker-compose/test.yml', 'run', 'test'])
+    elif where == 'host':
+      run(['bash', '-c', 'cd test && npm install && npm test'])
+    else:
+      raise Exception('invalid `where`')
+
+  finally:
+    if not already_running:
+      docker_down()
+
+def bg():
+  docker_prep()
+  docker_compose_call(['up', '-d', '--remove-orphans'])
+
 def run(cmd, get_output=False, ignore_error=False):
   return subprocess.run(cmd, check=not ignore_error, capture_output=get_output, text=get_output)
 
 def docker_compose_call(args, get_output=False, ignore_error=False):
-  print('DEBUG 2')
   cmd = compose_command + args
   print(f'docker_compose_call: {cmd}')
   return run(cmd, get_output=get_output, ignore_error=ignore_error)
@@ -216,6 +268,13 @@ def docker_is_up():
     docker_compose_call(['top'])
     raise
 
+compose_command = ['docker-compose', '-p', PROJECT_NAME]
+
+def add_compose_config(fn):
+  compose_command.append('-f')
+  compose_command.append(os.path.join('docker-compose', f'{fn}.yml'))
+
+
 def parse_config():
   global use_ssl, local, port, develop, admin_password, domain, compose_command, mongo_express_enabled, jupyter_enabled, host, command
 
@@ -225,12 +284,6 @@ def parse_config():
     command = config.get('command')
     if not command:
       raise Exception('command required as CLI argument or in config file')
-
-  compose_command = ['docker-compose', '-p', PROJECT_NAME]
-
-  def add_compose_config(fn):
-    compose_command.append('-f')
-    compose_command.append(os.path.join('docker-compose', f'{fn}.yml'))
 
   add_compose_config('main')
 
