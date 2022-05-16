@@ -16,4 +16,4 @@ services:
       - ../test/specs:/opt/test/specs
       - ../test/package.json:/opt/test/package.json
       - ../test/package-lock.json:/opt/test/package-lock.json
-    command: bash -c 'flock node_modules/flock-for-multi-container-installs npm install && cd /opt/test && (Xvfb :99 -screen 0 1024x768x16 -ac -nolisten tcp -nolisten unix & echo starting test & CHROMIUM_INSIDE_DOCKER=1 DISPLAY=:99 npm test)'
+    command: bash -c 'echo "127.0.0.1 localhost" > /etc/hosts && flock node_modules/flock-for-multi-container-installs npm install && cd /opt/test && (Xvfb :99 -screen 0 1024x768x16 -ac -nolisten tcp -nolisten unix & echo starting test & CHROMIUM_INSIDE_DOCKER=1 DISPLAY=:99 npm test)'
