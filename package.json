@@ -12,7 +12,8 @@
     "nodemon": "^2.0.15",
     "react": "18.0.0",
     "react-dom": "18.0.0",
-    "tslab": "^1.0.15"
+    "tslab": "^1.0.15",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.5",
