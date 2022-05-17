@@ -32,7 +32,7 @@ describe('save and load data via the UI', async function () {
     await page.goto(baseUrl + '/examples/save-and-load')
     const body = await page.waitForSelector('body')
     const bodyText = await body.evaluate(el => el.textContent)
-    expect(bodyText).to.contain(text)
+    bodyText.should.contain(text)
   })
 
 })
@@ -47,7 +47,17 @@ describe('save and load data via the API', async function () {
 
     const res = await axios.get(baseUrl + '/express/examples/getText')
 
-    expect(res.data.text).to.contain(text)
+    res.data.text.should.contain(text)
+  })
+
+  it('should fail to save non-string data', async function () {
+    return axios.post(baseUrl + '/express/examples/saveText', {
+      text: null
+    }).should.be.rejected
+  })
+
+  it('should fail to save missing text', async function () {
+    return axios.post(baseUrl + '/express/examples/saveText', {}).should.be.rejected
   })
 
 })

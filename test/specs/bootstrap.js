@@ -1,10 +1,15 @@
 import puppeteer from 'puppeteer'
-import { expect } from 'chai'
+import chai, { expect, assert } from 'chai'
+import chaiAsPromised from 'chai-as-promised'
 import axios from 'axios'
 
 global.baseUrl = 'http://localhost:8000'
 global.expect = expect
+global.assert = assert
 global.axios = axios
+
+chai.use(chaiAsPromised)
+chai.should()
 
 let browser = null
 

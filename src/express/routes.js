@@ -3,6 +3,7 @@ import getDb from "../lib/db.js"
 import { ObjectId } from "mongodb"
 import getConfig from "../lib/config.js"
 import { getText } from '../lib/misc.js'
+import * as yup from 'yup'
 
 export const routes = Router()
 
@@ -11,10 +12,16 @@ routes.route('/examples/getText').get(async (req, res) => {
 })
 
 routes.route('/examples/saveText').post(async (req, res) => {
-  let db = await getDb()
+  const db = await getDb()
+  try {
+    var newText = await yup.string().required().validate(req.body.text)
+  } catch (err) {
+    res.status(400)
+    res.json('invalid text')
+  }
   await db.collection('example').updateOne(
     {},
-    { $set: { text: req.body.text } },
+    { $set: { text: newText } },
     { upsert: true, })
   res.json()
 })
