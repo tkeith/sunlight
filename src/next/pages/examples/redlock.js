@@ -4,7 +4,7 @@ import axios from 'axios'
 export default function Page() {
   let [result, setResult] = useState('not yet called')
 
-  const triggerEvent = async event => {
+  const acquireLock = async event => {
     event.preventDefault()
 
     setResult('loading...')
@@ -15,24 +15,7 @@ export default function Page() {
 
   return <>
     <h1>Redlock application-level locking example</h1>
-    <button onClick={triggerEvent}
-      className="px-6
-        py-2.5
-        bg-blue-600
-        text-white
-        font-medium
-        text-xs
-        leading-tight
-        uppercase
-        rounded
-        shadow-md
-        hover:bg-blue-700 hover:shadow-lg
-        focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0
-        active:bg-blue-800 active:shadow-lg
-        transition
-        duration-150
-        ease-in-out"
-    >Acquire lock</button>
+    <TextButton onClick={acquireLock}>Acquire Lock</TextButton>
     <p>Result: {result}</p>
   </>
 }
