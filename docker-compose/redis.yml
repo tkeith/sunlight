@@ -1,0 +1,12 @@
+volumes:
+
+  redis: null
+
+services:
+
+  redis:
+    image: redis:7.0.0
+    restart: "no"
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis:/data

@@ -1,20 +1,7 @@
-import getDb from "./db.js"
-
-export async function getTextOld() {
-  return await getDb()
-    .then(db =>
-      db.collection('example').findOne({})
-    )
-    .then(row =>
-      row?.text || ""
-    )
-    .catch(err =>
-      console.log(err)
-    )
-}
+import getMongo from "./mongo.js"
 
 export const getText = async () => {
-  const db = await getDb()
+  const db = await getMongo()
   const row = await db.collection('example').findOne({})
   console.log(row)
   const text = row?.text || ""

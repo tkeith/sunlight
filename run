@@ -17,6 +17,7 @@ DEFAULT_PORT = 8000
 NEXT_ENABLED = True
 EXPRESS_ENABLED = True
 MONGO_ENABLED = True
+REDIS_ENABLED = True
 WORKER_ENABLED = True # changing this to False will break the CLI (bash & node) functionality, since it uses the worker image
 CERTBOT_EMAIL = 'certbot-notifications@tk.co'
 
@@ -298,6 +299,9 @@ def parse_config():
 
   if MONGO_ENABLED:
     add_compose_config('mongo')
+
+  if REDIS_ENABLED:
+    add_compose_config('redis')
 
     if config.get('mongo_exposed_localhost', False):
       add_compose_config('mongo-exposed-localhost')
