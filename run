@@ -222,8 +222,8 @@ def do_test(where):
 
   try:
     if where == 'docker':
-      run(['docker-compose', '-p', PROJECT_NAME, '-f', 'docker-compose/test.yml', 'build'])
-      run(['docker-compose', '-p', PROJECT_NAME, '-f', 'docker-compose/test.yml', 'run', 'test'])
+      run(['docker-compose', '-p', PROJECT_NAME, '-f', compose_file_path('test'), 'build'])
+      run(['docker-compose', '-p', PROJECT_NAME, '-f', compose_file_path('test'), 'run', 'test'])
     elif where == 'host':
       run(['bash', '-c', 'cd test && npm install && npm test'])
     else:
@@ -271,9 +271,12 @@ def docker_is_up():
 
 compose_command = ['docker-compose', '-p', PROJECT_NAME]
 
-def add_compose_config(fn):
+def compose_file_path(filename):
+  return os.path.join('misc', 'docker-compose', f'{filename}.yml')
+
+def add_compose_config(filename):
   compose_command.append('-f')
-  compose_command.append(os.path.join('docker-compose', f'{fn}.yml'))
+  compose_command.append(compose_file_path(filename))
 
 
 def parse_config():
