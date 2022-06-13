@@ -1,0 +1,6 @@
+{
+  "admin_password": "test123",
+  "develop": true,
+  "mongo_express_enabled": true,
+  "jupyter_enabled": true
+}

@@ -2,5 +2,6 @@
 .DS_Store
 build
 /*.conf.json
+!sample-local.conf.json
 node_modules
 *.ipynb
