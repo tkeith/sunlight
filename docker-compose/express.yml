@@ -11,7 +11,7 @@ services:
       - ../package-lock.json:/opt/app/package-lock.json
       - ../misc:/opt/app/misc
       - node_modules:/opt/app/node_modules
-    command: bash -c 'misc/setup_node_container && echo "running express" && cd src/express && npx nodemon --watch .. ./server.js'
+    command: bash -c 'misc/setup_node_container && echo "running express" && cd src/express && npx nodemon --watch ../.. ./server.js'
 
   # nginx:
   #   depends_on:
