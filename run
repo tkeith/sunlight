@@ -272,7 +272,7 @@ def docker_is_up():
 compose_command = ['docker-compose', '-p', PROJECT_NAME]
 
 def compose_file_path(filename):
-  return os.path.join('misc', 'docker-compose', f'{filename}.yml')
+  return os.path.join('docker-compose', f'{filename}.yml')
 
 def add_compose_config(filename):
   compose_command.append('-f')
