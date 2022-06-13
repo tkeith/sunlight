@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "@headlessui/react": "^1.6.4",
+    "@heroicons/react": "^1.0.6",
     "@usedapp/core": "^1.0.0",
     "axios": "^0.27.2",
     "bullmq": "^1.85.4",
