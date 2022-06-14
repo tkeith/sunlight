@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { SubmitButton, TextInput } from '../../components/examples'
+import { SubmitButton, TextInput } from '../../components/examples.js'
 
 export default function Page() {
   let [text, setText] = useState('loading...')
