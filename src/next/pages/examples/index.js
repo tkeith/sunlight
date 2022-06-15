@@ -6,7 +6,7 @@ import RateLimit from '../../components/examples/RateLimit.js'
 import { getText } from '../../../lib/misc.js'
 
 function Section({ name, children }) {
-  return <div className='p-6 max-w-lg mx-auto bg-white rounded-xl shadow-md items-center my-2'>
+  return <div className='p-6 max-w-lg mx-auto bg-white rounded-xl shadow-md items-center my-4'>
     <h1 className='text-2xl mb-2'>{name}</h1>
     {children}
   </div>
@@ -30,7 +30,8 @@ export default function Page({ text }) {
 export async function getServerSideProps() {
   return {
     props: {
-      text: await getText()
+      text: await getText(),
+      bodyClasses: 'bg-gray-100',
     }
   }
 }
