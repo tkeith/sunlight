@@ -8,7 +8,7 @@ export default function RateLimit() {
   const triggerEvent = async event => {
     event.preventDefault()
 
-    setResult('loading...')
+    setResult('Loading...')
 
     const res = await axios.get('/express/examples/ratelimit')
     setResult(res.data.toString())
