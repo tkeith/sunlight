@@ -51,7 +51,8 @@ routes.route('/examples/saveTextAfterDelay').post(async (req, res) => {
 })
 
 routes.route('/examples/redis/getText').get(async (req, res) => {
-  res.json({ text: (await getRedis()).get('example:text') })
+  const text = await (await getRedis()).get('example:text');
+  res.json({ text: text })
 })
 
 routes.route('/examples/redis/saveText').post(async (req, res) => {

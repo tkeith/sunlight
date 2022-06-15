@@ -1,6 +1,6 @@
 import { useEtherBalance, useEthers } from '@usedapp/core'
 import { formatEther } from '@ethersproject/units'
-import { TextButton } from '../../components/examples.js'
+import { TextButton } from '../../components/examples/misc.js'
 
 export default function DAppPage() {
   const { activateBrowserWallet, account } = useEthers()

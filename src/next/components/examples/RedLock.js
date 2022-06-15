@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import axios from 'axios'
-import { TextButton } from '../../components/examples.js'
+import { TextButton } from './misc.js'
 
-export default function Page() {
+export default function RedLock() {
   let [result, setResult] = useState('not yet called')
 
   const acquireLock = async event => {

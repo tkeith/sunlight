@@ -17,17 +17,17 @@ const btnClasses = `
   ease-in-out`
 
 export function TextButton({ children, onClick }) {
-  return <button onClick={onClick} className={btnClasses}>{children}</button>
+  return <div className="my-2"><button onClick={onClick} className={btnClasses}>{children}</button></div>
 }
 
 export function SubmitButton({ children }) {
-  return <button type='submit' className={btnClasses}>{children}</button>
+  return <div className="my-2"><button type='submit' className={btnClasses}>{children}</button></div>
 }
 
 export function TextInput({ label, placeholder, helpText, defaultValue, name }) {
-  return <div className="form-group mb-6">
-    <label htmlFor={name} className="form-label inline-block mb-2 ml-10text-gray-700">{label}</label>
-    <input type="text" className="form-control
+  return <div className="my-2">
+    {label && <label htmlFor={name} className="inline-block mb-2 ml-10text-gray-700">{label}</label>}
+    <input type="text" className="
           block
           w-1/8
           px-3
@@ -41,7 +41,11 @@ export function TextInput({ label, placeholder, helpText, defaultValue, name }) 
           transition
           ease-in-out
           m-0
-          focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none" name={name} aria-describedby="textHelp" placeholder={placeholder} defaultValue={defaultValue} />
+          focus:text-gray-700
+          focus:bg-white
+          focus:border-blue-600
+          focus:outline-none
+          " name={name} aria-describedby="textHelp" placeholder={placeholder} defaultValue={defaultValue} />
     <small id="textHelp" className="block mt-1 text-xs text-gray-600">{helpText}</small>
   </div>
 }
