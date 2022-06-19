@@ -3,7 +3,7 @@ import getMongo from "../lib/mongo.js"
 import getRedis from "../lib/redis.js"
 import { ObjectId } from "mongodb"
 import getConfig from "../lib/config.js"
-import { getText } from '../lib/misc.js'
+import { getText } from '../lib/examples.js'
 import * as yup from 'yup'
 import redlock from '../lib/redlock.js'
 import getRateLimiter from '../lib/ratelimit.js'
