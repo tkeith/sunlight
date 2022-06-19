@@ -86,4 +86,12 @@ router.route('/ratelimit').get(async (req, res) => {
   }
 })
 
+router.route('/params/:foo/:bar').get(async (req, res) => {
+  return res.json(req.params)
+})
+
+router.route('/headers').get(async (req, res) => {
+  return res.json(req.headers)
+})
+
 export default router
