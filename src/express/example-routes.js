@@ -90,8 +90,12 @@ router.route('/params/:foo/:bar').get(async (req, res) => {
   return res.json(req.params)
 })
 
-router.route('/headers').get(async (req, res) => {
-  return res.json(req.headers)
+router.route('/requestDetails').get(async (req, res) => {
+  return res.json({
+    headers: req.headers,
+    query: req.query,
+    body: req.body,
+  })
 })
 
 export default router
