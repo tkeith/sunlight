@@ -1,6 +1,7 @@
 import { createClient } from 'redis';
+import callOnce from './callOnce.js';
 
-const connect = async () => {
+const getRedis = callOnce(async () => {
   const client = createClient({
     url: 'redis://redis:6379'
   })
@@ -11,15 +12,6 @@ const connect = async () => {
     await new Promise(r => setTimeout(r, 1000))
     return await connect()
   }
-}
-
-let clientPromise
-
-const getRedis = () => {
-  if (!clientPromise) {
-    clientPromise = connect()
-  }
-  return clientPromise
-}
+});
 
 export default getRedis

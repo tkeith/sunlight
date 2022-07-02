@@ -1,6 +1,7 @@
 import { MongoClient } from "mongodb"
+import callOnce from "./callOnce.js"
 
-const connect = async () => {
+const getMongo = callOnce(async () => {
   try {
     const conn = await MongoClient.connect('mongodb://app:app@mongo:27017/')
     return conn.db("app")
@@ -8,15 +9,6 @@ const connect = async () => {
     await new Promise(r => setTimeout(r, 1000))
     return await connect()
   }
-}
-
-let connPromise
-
-const getMongo = () => {
-  if (!connPromise) {
-    connPromise = connect()
-  }
-  return connPromise
-}
+});
 
 export default getMongo

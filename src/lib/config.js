@@ -1,18 +1,10 @@
 import { promises } from 'fs'
+import callOnce from './callOnce.js'
 
-const readConfig = async () => {
+const getConfig = callOnce(async () => {
   const data = await promises.readFile('/opt/config.json')
   const cfg = JSON.parse(data.toString())
   return cfg
-}
-
-let cfgPromise
-
-const getConfig = () => {
-  if (!cfgPromise) {
-    cfgPromise = readConfig()
-  }
-  return cfgPromise
-}
+});
 
 export default getConfig
