@@ -4,4 +4,4 @@ build
 /*.conf.json
 !sample-local.conf.json
 node_modules
-*.ipynb
+local_jupyter_notebooks
