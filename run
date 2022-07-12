@@ -189,8 +189,8 @@ def main():
     raise Exception(f'unknown command: {command}')
 
 def do_test(where):
-  out = run(['docker-compose', '-p', PROJECT_NAME, 'ps'], get_output=True).stdout
-  if 'nginx' in out and 'running' in out:
+  out = docker_compose_call(['ps'], get_output=True).stdout
+  if 'nginx' in out and 'Up' in out:
     already_running = True
   else:
     already_running = False
