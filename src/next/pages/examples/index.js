@@ -17,9 +17,13 @@ export default function Page({ text }) {
     <Section name='Server-side rendering'>
       <p>Server-side-rendered text: {text}</p>
     </Section>
-    <Section name='Live text from MongoDB'><LiveText source='mongo' /></Section>
+    <div id='liveTextMongoSection'>
+      <Section name='Live text from MongoDB'><LiveText source='mongo' /></Section>
+    </div>
     <Section name='Live text from Redis'><LiveText source='redis' /></Section>
-    <Section name='Save text to MongoDB'><SaveText source='mongo' /></Section>
+    <div id='saveTextMongoSection'>
+      <Section name='Save text to MongoDB'><SaveText source='mongo' /></Section>
+    </div>
     <Section name='Save text to Redis'><SaveText source='redis' /></Section>
     <Section name='BullMQ delayed task'><BullMQ /></Section>
     <Section name='RedLock application-level locking'><RedLock /></Section>

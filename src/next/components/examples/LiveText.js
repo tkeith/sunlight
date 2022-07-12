@@ -24,7 +24,7 @@ export default function LiveText({ source }) {
   }, [])
 
   return <>
-    <p>Text: {text}</p>
+    <p>Text: <span className='liveTextData'>{text}</span></p>
   </>
 
 }

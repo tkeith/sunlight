@@ -21,19 +21,20 @@ router.route('/getText').get(async (req, res) => {
 })
 
 router.route('/saveText').post(async (req, res) => {
-  const db = await getMongo()
+  const db = await getMongo();
   try {
-    var newText = await yup.string().required().validate(req.body.text)
+    var newText = await yup.string().required().validate(req.body.text);
   } catch (err) {
-    res.status(400)
-    res.json('invalid text')
+    res.status(400);
+    res.json('invalid text');
+    return;
   }
   await db.collection('example').updateOne(
     {},
     { $set: { text: newText } },
-    { upsert: true, })
-  res.json('new text saved')
-})
+    { upsert: true, });
+  res.json('new text saved');
+});
 
 const exampleSaveTextQueue = getQueue('exampleSaveTextQueue');
 
