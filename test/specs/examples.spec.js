@@ -29,7 +29,7 @@ describe('save and load data via the UI', async function () {
     }
   });
 
-  it('should return the saved value', async function () {
+  it('should save the value', async function () {
     await page.goto(baseUrl + '/examples')
     const input = await page.waitForSelector('#saveTextMongoSection input')
     await input.click({ clickCount: 3 })
@@ -37,7 +37,7 @@ describe('save and load data via the UI', async function () {
     await page.click('#saveTextMongoSection button')
   })
 
-  it('test part 2', async function () {
+  it('should return the saved value', async function () {
     this.retries(10);
     const body = await page.waitForSelector('#liveTextMongoSection .liveTextData')
     const bodyText = await body.evaluate(el => el.textContent)
