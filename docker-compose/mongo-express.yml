@@ -4,12 +4,14 @@ services:
     image: mongo-express:0.54
     # depends_on:
     #   - mongo
-    restart: "on-failure"
+    restart: "no"
     environment:
       ME_CONFIG_MONGODB_ADMINUSERNAME: app
       ME_CONFIG_MONGODB_ADMINPASSWORD: app
       ME_CONFIG_MONGODB_URL: mongodb://app:app@mongo:27017/
       ME_CONFIG_SITE_BASEURL: "/mongo-express/"
+    command: bash -c 'echo "waiting for mongo:27017 to become available"; while ! nc -z mongo 27017; do sleep 1; done; echo "mongo:27017 is now available, launching mongo-express..."; sleep 1; node app'
+    # command: sleep 9999
 
   # nginx:
   #   depends_on:
