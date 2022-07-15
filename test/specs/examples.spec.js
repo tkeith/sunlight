@@ -1,7 +1,7 @@
 import crypto from 'crypto'
 
 describe('check home page', function () {
-  this.timeout(30000)
+  this.timeout(10000)
   let page
   before(async () => page = await getPage())
 
@@ -17,7 +17,7 @@ describe('check home page', function () {
 describe('save and load data via the UI', async function () {
   const text = "random test text " + crypto.randomBytes(32).toString('hex')
 
-  this.timeout(30000)
+  this.timeout(10000)
   let page
   before(async () => page = await getPage())
 
