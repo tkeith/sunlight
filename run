@@ -118,6 +118,7 @@ def main():
       textwrap.dedent(f'''
         systemctl daemon-reload
         systemctl restart {PROJECT_NAME}
+        systemctl enable {PROJECT_NAME}
       ''')
     ])
   elif command == 'logs-remote':
