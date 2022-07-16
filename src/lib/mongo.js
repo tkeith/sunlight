@@ -7,7 +7,7 @@ const connect = async () => {
   return conn.db("app")
 }
 
-const retryer = async () => asyncRetryTimeout(60000, 1000, connect);
+const retryer = async () => asyncRetryTimeout(10000, 1000, connect);
 
 const getMongo = callOnce(retryer);
 

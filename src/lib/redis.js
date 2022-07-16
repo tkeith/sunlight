@@ -9,7 +9,7 @@ const connect = async () => {
   return client
 }
 
-const retryer = async () => asyncRetryTimeout(60000, 1000, connect);
+const retryer = async () => asyncRetryTimeout(10000, 1000, connect);
 
 const getRedis = callOnce(retryer);
 
