@@ -1,0 +1,12 @@
+services:
+  code-server:
+    restart: "no"
+    build:
+      context: ../docker-contexts/code-server
+    volumes:
+      - ../build/config.json:/opt/config.json
+      - ../src:/opt/app/src
+      - ../package.json:/opt/app/package.json
+      - ../package-lock.json:/opt/app/package-lock.json
+      - ../misc:/opt/app/misc
+      - node_modules:/opt/app/node_modules
