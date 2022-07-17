@@ -20,6 +20,7 @@
     "redis": "^4.1.0",
     "redlock": "^5.0.0-beta.2",
     "tslab": "^1.0.15",
+    "web3": "^1.7.4",
     "yup": "^0.32.11"
   },
   "devDependencies": {
