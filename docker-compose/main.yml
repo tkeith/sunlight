@@ -3,6 +3,7 @@ version: '3.8'
 volumes:
 
   node_modules: null
+  scratch_volume: null
 
 services:
 

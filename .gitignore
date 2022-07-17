@@ -5,3 +5,5 @@ build
 !sample-local.conf.json
 node_modules
 local_jupyter_notebooks
+scratch_transient
+scratch_volume

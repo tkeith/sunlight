@@ -1,4 +1,5 @@
 services:
+
   code-server:
     restart: "no"
     build:
@@ -10,3 +11,4 @@ services:
       - ../package-lock.json:/opt/app/package-lock.json
       - ../misc:/opt/app/misc
       - node_modules:/opt/app/node_modules
+      - scratch_volume:/opt/app/scratch_volume
