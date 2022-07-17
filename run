@@ -361,57 +361,6 @@ def config_nginx():
     send_timeout                300;
   ''')
 
-  if code_server_enabled:
-    app_part += textwrap.dedent(f'''
-      location /code/ {{
-        proxy_pass http://code-server:8080/;
-
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-
-        proxy_buffering off;
-        proxy_redirect off;
-      }}
-
-      location /stable-30d9c6cd9483b2cc586687151bcbcd635f373630/ {{
-        proxy_pass http://code-server:8080/stable-30d9c6cd9483b2cc586687151bcbcd635f373630/;
-
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-
-        proxy_buffering off;
-        proxy_redirect off;
-      }}
-
-      location /vs/ {{
-        proxy_pass http://code-server:8080/vs/;
-
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection "upgrade";
-
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-
-        proxy_buffering off;
-        proxy_redirect off;
-      }}
-    ''')
-
   if NEXT_ENABLED:
     app_part += textwrap.dedent(f'''
       location / {{
@@ -435,6 +384,66 @@ def config_nginx():
     app_part += textwrap.dedent(f'''
       location /express/ {{
         proxy_pass http://express:8002/;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_buffering off;
+        proxy_redirect off;
+      }}
+    ''')
+
+  if code_server_enabled:
+    app_part += textwrap.dedent(f'''
+      location /code/ {{
+        proxy_pass http://code-server:8080/;
+
+        auth_basic "";
+        auth_basic_user_file /opt/htpasswd-admin;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_buffering off;
+        proxy_redirect off;
+      }}
+
+      location /stable-30d9c6cd9483b2cc586687151bcbcd635f373630/ {{
+        proxy_pass http://code-server:8080/stable-30d9c6cd9483b2cc586687151bcbcd635f373630/;
+
+        auth_basic "";
+        auth_basic_user_file /opt/htpasswd-admin;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_buffering off;
+        proxy_redirect off;
+      }}
+
+      location /vs/ {{
+        proxy_pass http://code-server:8080/vs/;
+
+        auth_basic "";
+        auth_basic_user_file /opt/htpasswd-admin;
 
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
