@@ -10,5 +10,7 @@ services:
       - ../package.json:/opt/app/package.json
       - ../package-lock.json:/opt/app/package-lock.json
       - ../misc:/opt/app/misc
+      - ../scratch_committed:/opt/app/scratch_committed
+      - ../scratch_transient:/opt/app/scratch_transient
       - node_modules:/opt/app/node_modules
       - scratch_volume:/opt/app/scratch_volume
