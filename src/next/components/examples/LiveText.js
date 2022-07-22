@@ -21,7 +21,7 @@ export default function LiveText({ source }) {
 
     const interval = setInterval(updateText, 250)
     return () => { clearInterval(interval) }
-  }, [])
+  }, [source])
 
   return <>
     <p>Text: <span className='liveTextData'>{text}</span></p>
