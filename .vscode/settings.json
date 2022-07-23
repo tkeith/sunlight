@@ -1,6 +1,7 @@
 {
   "search.exclude": {
-    "**/.next": true
+    "**/.next": true,
+    "**/package-lock.json": true
   },
   "editor.tabSize": 2,
   "files.insertFinalNewline": true,

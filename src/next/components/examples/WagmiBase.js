@@ -25,6 +25,7 @@ const wagmiClient = createClient({
   provider,
   webSocketProvider,
 });
+
 export default function DAppBase({ children }) {
   return (
     <WagmiConfig client={wagmiClient}>
