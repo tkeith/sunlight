@@ -9,6 +9,6 @@ const connect = async () => {
 
 const retryer = async () => asyncRetryTimeout(10000, 1000, connect);
 
-const getMongo = callOnce(retryer);
+const getDb = callOnce(retryer);
 
-export default getMongo
+export default getDb

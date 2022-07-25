@@ -1,4 +1,4 @@
-import getConfig from './config.js'
+import getConfig from './getConfig.js'
 
 const baseUrl = async () => {
   const cfg = await getConfig();

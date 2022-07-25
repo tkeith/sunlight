@@ -1,10 +1,10 @@
 import { getWorker } from "../lib/bullmq.js";
-import getMongo from "../lib/mongo.js";
+import getDb from "../lib/getDb.js";
 
 getWorker('exampleSaveTextQueue', async job => {
   const newText = job.data.newText;
   console.log('saving new text: ', newText);
-  (await getMongo()).collection('example').updateOne(
+  (await getDb()).collection('example').updateOne(
     {},
     { $set: { text: newText } },
     { upsert: true, });
