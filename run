@@ -25,7 +25,7 @@ DOCKER_INSTALL_SCRIPT = '''
   if ! which dockerd; then
     curl -fsSL https://get.docker.com | bash
   fi
-  if ! which docker-compose; then
+  if ! docker compose && ! which docker-compose; then
     curl -L "https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
     chmod +x /usr/local/bin/docker-compose
   fi
@@ -223,8 +223,8 @@ def do_test(where):
 
   try:
     if where == 'docker':
-      run(['docker-compose', '-p', PROJECT_NAME, '-f', compose_file_path('test'), 'build'])
-      run(['docker-compose', '-p', PROJECT_NAME, '-f', compose_file_path('test'), 'run', 'test'])
+      run(compose_command_base + ['-f', compose_file_path('test'), 'build'])
+      run(compose_command_base + ['-f', compose_file_path('test'), 'run', 'test'])
     elif where == 'host':
       run(['bash', '-c', 'cd test && npm install && npm test'])
     else:
@@ -270,7 +270,14 @@ def docker_is_up():
     docker_compose_call(['top'])
     raise
 
-compose_command = ['docker-compose', '-p', PROJECT_NAME]
+if subprocess.run(['docker', 'compose']).returncode == 0:
+  compose_command_base = ['docker', 'compose']
+else:
+  compose_command_base = ['docker-compose']
+
+compose_command_base += ['-p', PROJECT_NAME]
+
+compose_command = compose_command_base.copy()
 
 def compose_file_path(filename):
   return os.path.join('docker-compose', f'{filename}.yml')
