@@ -1,8 +1,8 @@
 import { Router } from "express"
-import getMongo from "../lib/mongo.js"
-import getRedis from "../lib/redis.js"
+import getDb from "../lib/getDb.js"
+import getRedis from "../lib/getRedis.js"
 import { ObjectId } from "mongodb"
-import getConfig from "../lib/config.js"
+import getConfig from "../lib/getConfig.js"
 import { getText } from '../lib/examples.js'
 import * as yup from 'yup'
 import redlock from '../lib/redlock.js'
@@ -21,7 +21,7 @@ router.route('/getText').get(async (req, res) => {
 })
 
 router.route('/saveText').post(async (req, res) => {
-  const db = await getMongo();
+  const db = await getDb();
   try {
     var newText = await yup.string().required().validate(req.body.text);
   } catch (err) {

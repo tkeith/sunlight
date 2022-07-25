@@ -288,7 +288,7 @@ def add_compose_config(filename):
 
 
 def parse_config():
-  global use_ssl, local, port, develop, admin_password, domain, compose_command, mongo_express_enabled, jupyter_enabled, host, command
+  global use_ssl, local, port, develop, admin_password, domain, compose_command, mongo_express_enabled, jupyter_enabled, code_server_enabled, host, command
 
   if args.command:
     command = args.command
@@ -324,6 +324,10 @@ def parse_config():
   jupyter_enabled = config.get('jupyter_enabled', False)
   if jupyter_enabled:
     add_compose_config('jupyter')
+
+  code_server_enabled = config.get('code_server_enabled', False)
+  if code_server_enabled:
+    add_compose_config('code-server')
 
   develop = config.get('develop', False)
   if NEXT_ENABLED and develop:
@@ -387,6 +391,66 @@ def config_nginx():
     app_part += textwrap.dedent(f'''
       location /express/ {{
         proxy_pass http://express:8002/;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_buffering off;
+        proxy_redirect off;
+      }}
+    ''')
+
+  if code_server_enabled:
+    app_part += textwrap.dedent(f'''
+      location /code/ {{
+        proxy_pass http://code-server:8080/;
+
+        auth_basic "";
+        auth_basic_user_file /opt/htpasswd-admin;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_buffering off;
+        proxy_redirect off;
+      }}
+
+      location /stable-30d9c6cd9483b2cc586687151bcbcd635f373630/ {{
+        proxy_pass http://code-server:8080/stable-30d9c6cd9483b2cc586687151bcbcd635f373630/;
+
+        auth_basic "";
+        auth_basic_user_file /opt/htpasswd-admin;
+
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_buffering off;
+        proxy_redirect off;
+      }}
+
+      location /vs/ {{
+        proxy_pass http://code-server:8080/vs/;
+
+        auth_basic "";
+        auth_basic_user_file /opt/htpasswd-admin;
 
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;

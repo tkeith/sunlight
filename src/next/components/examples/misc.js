@@ -16,15 +16,15 @@ const btnClasses = `
   duration-150
   ease-in-out`
 
-export function TextButton({ children, onClick }) {
-  return <div className="my-2"><button onClick={onClick} className={btnClasses}>{children}</button></div>
+export function TextButton({ children, ...otherProps }) {
+  return <div className="my-2"><button {...otherProps} className={btnClasses}>{children}</button></div>
 }
 
 export function SubmitButton({ children }) {
   return <div className="my-2"><button type='submit' className={btnClasses}>{children}</button></div>
 }
 
-export function TextInput({ label, placeholder, helpText, defaultValue, name }) {
+export function TextInput({ label, helpText, ...otherProps }) {
   return <div className="my-2">
     {label && <label htmlFor={name} className="inline-block mb-2 ml-10text-gray-700">{label}</label>}
     <input type="text" className="
@@ -45,7 +45,7 @@ export function TextInput({ label, placeholder, helpText, defaultValue, name }) 
           focus:bg-white
           focus:border-blue-600
           focus:outline-none
-          " name={name} aria-describedby="textHelp" placeholder={placeholder} defaultValue={defaultValue} />
+          " aria-describedby="textHelp" {...otherProps} />
     <small id="textHelp" className="block mt-1 text-xs text-gray-600">{helpText}</small>
   </div>
 }

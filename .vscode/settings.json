@@ -1,0 +1,11 @@
+{
+  "search.exclude": {
+    "**/.next": true,
+    "**/package-lock.json": true
+  },
+  "editor.tabSize": 2,
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.updateImportsOnFileMove.enabled": "always"
+}

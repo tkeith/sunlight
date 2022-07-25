@@ -11,9 +11,4 @@ services:
       - ../package-lock.json:/opt/app/package-lock.json
       - ../misc:/opt/app/misc
       - node_modules:/opt/app/node_modules
-      - local_jupyter_notebooks:/opt/app/local_jupyter_notebooks
-    command: bash -c "misc/setup_node_container && npx tslab install && ln -s /opt/app/node_modules/.bin/tslab /usr/local/bin/ && echo 'running jupyter' && jupyter lab --notebook-dir=. --ip='*' --port=8003 --no-browser --allow-root --NotebookApp.allow_origin='*' --NotebookApp.base_url='/jupyter' --NotebookApp.password='' --NotebookApp.token=''" --NotebookApp.use_redirect_file=false
-
-volumes:
-
-  local_jupyter_notebooks: null
+    command: bash -c "misc/setup_node_container && npx tslab install && ln -s /opt/app/node_modules/.bin/tslab /usr/local/bin/ && echo 'running jupyter' && jupyter lab --notebook_dir=/opt/app --ip='*' --port=8003 --no-browser --allow-root --NotebookApp.allow_origin='*' --NotebookApp.base_url='/jupyter' --NotebookApp.password='' --NotebookApp.token=''" --NotebookApp.use_redirect_file=false
