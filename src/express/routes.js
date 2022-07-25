@@ -1,6 +1,6 @@
 import exampleRoutes from './example-routes.js'
 import { Router } from "express"
-import * as grid from '../lib/gridfs.js'
+import * as gridfs from '../lib/gridfs.js'
 
 // catch async errors
 // https://strongloop.com/strongblog/async-error-handling-expressjs-es7-promises-generators/
