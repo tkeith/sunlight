@@ -286,7 +286,6 @@ def add_compose_config(filename):
   compose_command.append('-f')
   compose_command.append(compose_file_path(filename))
 
-
 def parse_config():
   global use_ssl, local, port, develop, admin_password, domain, compose_command, mongo_express_enabled, jupyter_enabled, code_server_enabled, host, command
 
@@ -299,14 +298,7 @@ def parse_config():
 
   add_compose_config('main')
 
-  if NEXT_ENABLED:
-    add_compose_config('next')
-
-  if EXPRESS_ENABLED:
-    add_compose_config('express')
-
-  if WORKER_ENABLED:
-    add_compose_config('worker')
+  add_compose_config('node')
 
   if MONGO_ENABLED:
     add_compose_config('mongo')
@@ -328,10 +320,6 @@ def parse_config():
   code_server_enabled = config.get('code_server_enabled', False)
   if code_server_enabled:
     add_compose_config('code-server')
-
-  develop = config.get('develop', False)
-  if NEXT_ENABLED and develop:
-    add_compose_config('next-develop')
 
   host = config.get('host')
   domain = config.get('domain', host)
@@ -356,7 +344,7 @@ def random_password():
 
 def config_nginx():
   app_part = textwrap.dedent(f'''
-    client_max_body_size 500M;
+    client_max_body_size 100M;
     gzip on;
     gzip_vary on;
     gzip_min_length 10240;
@@ -368,10 +356,10 @@ def config_nginx():
     send_timeout                300;
   ''')
 
-  if NEXT_ENABLED:
+  if EXPRESS_ENABLED:
     app_part += textwrap.dedent(f'''
-      location / {{
-        proxy_pass http://next:8001/;
+      location /express/ {{
+        proxy_pass http://node:8002/;
 
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
@@ -387,10 +375,10 @@ def config_nginx():
       }}
     ''')
 
-  if EXPRESS_ENABLED:
+  if NEXT_ENABLED:
     app_part += textwrap.dedent(f'''
-      location /express/ {{
-        proxy_pass http://express:8002/;
+      location / {{
+        proxy_pass http://node:8001/;
 
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
@@ -555,7 +543,6 @@ def config_nginx():
 
   with open(os.path.join('build', 'nginx-admin-password.txt'), 'w') as f:
     f.write(admin_password)
-
 
 if __name__ == '__main__':
   main()

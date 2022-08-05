@@ -5,10 +5,8 @@ services:
     build:
       context: ../docker-contexts/jupyter
     volumes:
-      - ../build/config.json:/opt/config.json
-      - ../src:/opt/app/src
-      - ../package.json:/opt/app/package.json
-      - ../package-lock.json:/opt/app/package-lock.json
-      - ../misc:/opt/app/misc
+      - ..:/opt/app
       - node_modules:/opt/app/node_modules
+      - scratch_volume:/opt/app/scratch_volume
+
     command: bash -c "misc/setup_node_container && npx tslab install && ln -s /opt/app/node_modules/.bin/tslab /usr/local/bin/ && echo 'running jupyter' && jupyter lab --notebook_dir=/opt/app --ip='*' --port=8003 --no-browser --allow-root --NotebookApp.allow_origin='*' --NotebookApp.base_url='/jupyter' --NotebookApp.password='' --NotebookApp.token=''" --NotebookApp.use_redirect_file=false

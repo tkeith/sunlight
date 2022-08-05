@@ -1,7 +1,9 @@
 {
   "search.exclude": {
     "**/.next": true,
-    "**/package-lock.json": true
+    "**/package-lock.json": true,
+    "node_modules": true,
+    "build": true
   },
   "editor.tabSize": 2,
   "files.insertFinalNewline": true,

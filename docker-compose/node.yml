@@ -1,0 +1,11 @@
+services:
+
+  node:
+    build:
+      context: ../docker-contexts/node
+    restart: "no"
+    volumes:
+      - ../build/config.json:/opt/config.json
+      - ../:/opt/app
+      - node_modules:/opt/app/node_modules
+    command: python3 -u /opt/app/misc/node-run

@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+
+import signal
+import subprocess
+import json
+import os
+import sys
+import time
+import typing
+
+processes: typing.List[subprocess.Popen] = []
+
+def stop():
+  print(f'stopping {len(processes)} processes...')
+  for p in processes:
+    p.terminate()
+  print('waiting for processes to stop...')
+  for p in processes:
+    p.wait()
+  print('processes stopped')
+  sys.exit()
+
+def main():
+  os.chdir('/opt/app')
+
+  with open('/opt/config.json') as f:
+    cfg = json.load(f)
+
+  signal.signal(signal.SIGTERM, stop)
+  signal.signal(signal.SIGINT, stop)
+
+  print('installing node packages...')
+  processes.append(subprocess.Popen(['npm', 'install']))
+  processes[-1].wait() # wait for installation to complete
+  processes.remove(processes[-1]) # no longer running
+  print('node package installation complete!')
+
+  print('launching worker')
+  processes.append(subprocess.Popen(['npx', 'nodemon', './worker/worker.ts']))
+
+  print('launching express')
+  processes.append(subprocess.Popen(['npx', 'nodemon', './express/server.ts']))
+
+  if cfg.get('develop'):
+    print('launching next (develop mode)')
+    processes.append(subprocess.Popen(['npx', 'next', 'dev', '-p', '8001']))
+  else:
+    print('building next (production mode)')
+    processes.append(subprocess.Popen(['npx', 'next', 'build']))
+    processes[-1].wait() # wait for installation to complete
+    processes.remove(processes[-1]) # no longer running
+    print('launching next (production mode)')
+    processes.append(subprocess.Popen(['npx', 'next', 'start', '-p', '8001']))
+
+  # wait forever
+  while True:
+    time.sleep(3600)
+
+
+if __name__ == '__main__':
+  main()
