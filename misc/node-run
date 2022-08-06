@@ -30,7 +30,7 @@ def main():
   signal.signal(signal.SIGINT, stop)
 
   print('installing node packages...')
-  processes.append(subprocess.Popen(['npm', 'install']))
+  processes.append(subprocess.Popen(['flock', 'node_modules/flock-for-multi-container-installs', 'npm', 'install']))
   processes[-1].wait() # wait for installation to complete
   processes.remove(processes[-1]) # no longer running
   print('node package installation complete!')
@@ -41,7 +41,7 @@ def main():
   print('launching express')
   processes.append(subprocess.Popen(['npx', 'nodemon', './express/server.ts']))
 
-  if cfg.get('develop'):
+  if cfg['public'].get('develop'):
     print('launching next (develop mode)')
     processes.append(subprocess.Popen(['npx', 'next', 'dev', '-p', '8001']))
   else:

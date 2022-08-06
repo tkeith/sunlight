@@ -40,8 +40,8 @@ def main():
 
   parser.add_argument('config', type=str,
                       help='config filename')
-  parser.add_argument('command', type=str, nargs='?', default=None,
-                      help='command to run -- can be: fg, bg, stop, deploy, cli')
+  parser.add_argument('command', type=str, nargs='?',
+                      help='command to run -- can be: run, bg, stop, deploy, cli')
   parser.add_argument('command_args', nargs=argparse.REMAINDER)
 
   args = parser.parse_args()
@@ -63,7 +63,7 @@ def main():
 
   config_nginx()
 
-  if command == 'fg':
+  if command in ['fg', 'run']:
     docker_prep()
     docker_compose_call(['up', '--remove-orphans'])
   elif command == 'bg':
@@ -289,12 +289,7 @@ def add_compose_config(filename):
 def parse_config():
   global use_ssl, local, port, develop, admin_password, domain, compose_command, mongo_express_enabled, jupyter_enabled, code_server_enabled, host, command
 
-  if args.command:
-    command = args.command
-  else:
-    command = config.get('command')
-    if not command:
-      raise Exception('command required as CLI argument or in config file')
+  command = args.command
 
   add_compose_config('main')
 
@@ -306,32 +301,38 @@ def parse_config():
   if REDIS_ENABLED:
     add_compose_config('redis')
 
-    if config.get('mongo_exposed_localhost', False):
+    if config['server'].get('mongo_exposed_localhost', False):
       add_compose_config('mongo-exposed-localhost')
 
-  mongo_express_enabled = config.get('mongo_express_enabled', False)
+  mongo_express_enabled = config['server'].get('mongo_express_enabled', False)
   if mongo_express_enabled:
     add_compose_config('mongo-express')
 
-  jupyter_enabled = config.get('jupyter_enabled', False)
+  jupyter_enabled = config['server'].get('jupyter_enabled', False)
   if jupyter_enabled:
     add_compose_config('jupyter')
 
-  code_server_enabled = config.get('code_server_enabled', False)
+  code_server_enabled = config['server'].get('code_server_enabled', False)
   if code_server_enabled:
     add_compose_config('code-server')
 
-  host = config.get('host')
-  domain = config.get('domain', host)
+  host = config['deployer'].get('host')
+  domain = config['server'].get('domain')
+  if host and not domain:
+    domain = host
+    config['server']['domain'] = host
   if domain:
     use_ssl = True
+    config['public']['base_url'] = f'https://{domain}'
     add_compose_config('with-ssl')
   else:
     use_ssl = False
+    config['public']['base_url'] = f'http://localhost:8000'
     add_compose_config('without-ssl')
-    local = config.get('local', True)
-    port = config.get('port', DEFAULT_PORT)
-  admin_password = config.get('admin_password')
+    # 8/5/22 -- next two lines unused? commenting out for now
+    # local = config.get('local', True)
+    # port = config.get('port', DEFAULT_PORT)
+  admin_password = config['server'].get('admin_password')
   if admin_password is None:
     admin_password = random_password()
     print(f'admin_password - randomly generated for this build: {admin_password}')

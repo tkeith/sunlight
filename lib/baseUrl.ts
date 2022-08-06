@@ -1,7 +1,7 @@
 import getConfig from './getConfig'
 
 const baseUrl = async () => {
-  const cfg = await getConfig();
+  const cfg = getConfig();
   if (cfg.domain) {
     return `https://${cfg.domain}`;
   }

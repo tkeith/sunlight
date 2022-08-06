@@ -11,7 +11,7 @@ import { getQueue } from "../lib/bullmq"
 const router = Router()
 
 router.route('/isMongoExpressEnabled').get(async (req: Request, res: Response) => {
-  const cfg = await getConfig()
+  const cfg = getConfig()
   res.json(cfg.mongo_express_enabled)
 })
 
