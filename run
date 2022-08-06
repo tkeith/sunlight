@@ -76,12 +76,10 @@ def main():
     docker_compose_call(['logs', '-f'])
   elif command == 'bash':
     docker_prep_if_down()
-    # docker_compose_call(['run', 'worker', 'bash', '-c', 'misc/setup_node_container; bash'])
-    docker_compose_call(['run', 'worker', 'bash', '-c', 'bash'])
+    docker_compose_call(['run', 'node', 'bash', '-c', 'bash'])
   elif command == 'node':
     docker_prep_if_down()
-    # docker_compose_call(['run', 'worker', 'bash', '-c', 'misc/setup_node_container; node'])
-    docker_compose_call(['run', 'worker', 'bash', '-c', 'cd src; node'])
+    docker_compose_call(['run', 'node', 'bash', '-c', 'node'])
   elif command == 'test-host':
     do_test(where='host')
   elif command == 'test':
@@ -258,6 +256,10 @@ def docker_build():
 def docker_prep():
   docker_down()
   docker_build()
+  npm_install_if_needed()
+
+def npm_install_if_needed():
+  docker_compose_call(['run', 'node', 'python3', 'misc/npm-install-if-needed'])
 
 def docker_prep_if_down():
   if not docker_is_up():
@@ -270,7 +272,7 @@ def docker_is_up():
     docker_compose_call(['top'])
     raise
 
-if subprocess.run(['docker', 'compose']).returncode == 0:
+if subprocess.run(['docker', 'compose'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode == 0:
   compose_command_base = ['docker', 'compose']
 else:
   compose_command_base = ['docker-compose']

@@ -29,11 +29,12 @@ def main():
   signal.signal(signal.SIGTERM, stop)
   signal.signal(signal.SIGINT, stop)
 
-  print('installing node packages...')
-  processes.append(subprocess.Popen(['flock', 'node_modules/flock-for-multi-container-installs', 'npm', 'install']))
-  processes[-1].wait() # wait for installation to complete
-  processes.remove(processes[-1]) # no longer running
-  print('node package installation complete!')
+  # NOTE 8/6/22: node packages are now installed via `npm-install-if-needed` script called from run script
+  # print('installing node packages...')
+  # processes.append(subprocess.Popen(['flock', 'node_modules/flock-for-multi-container-installs', 'npm', 'install']))
+  # processes[-1].wait() # wait for installation to complete
+  # processes.remove(processes[-1]) # no longer running
+  # print('node package installation complete!')
 
   print('launching worker')
   processes.append(subprocess.Popen(['npx', 'nodemon', './worker/worker.ts']))
