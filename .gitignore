@@ -1,9 +1,11 @@
 .DS_Store
 build
 /*.conf.json
+/*.deployment.json
 !sample-local.conf.json
 node_modules
 local_jupyter_notebooks
+/*.ipynb
 scratch_transient
 scratch_transient/*
 scratch_volume

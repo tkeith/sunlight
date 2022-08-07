@@ -46,7 +46,17 @@ def main():
 
   args = parser.parse_args()
 
-  with open(args.config) as config_f:
+  config_filename: str = os.path.abspath(args.config)
+  config_filename_base: str = config_filename
+  for suffix in ['.json', '.conf']:
+    if config_filename_base.endswith(suffix):
+      config_filename_base = config_filename_base[:-len(suffix)]
+  deployment_state_filename: str = config_filename_base + '.deployment.json'
+
+  os.environ['config_filename'] = config_filename
+  os.environ['deployment_state_filename'] = deployment_state_filename
+
+  with open(config_filename) as config_f:
     config = json.load(config_f)
 
   os.chdir(proj_dir)
@@ -54,11 +64,24 @@ def main():
   if not os.path.exists('build'):
     os.mkdir('build')
 
+  deployed_config = config.copy()
+  del deployed_config['deployer']
+  open('build/deployed.conf.json', 'w').write(json.dumps(deployed_config))
+
   parse_config()
+
+  if not os.path.exists(deployment_state_filename):
+    open(deployment_state_filename, 'w').write('{}')
+
+  # this could be handled dynamically in getConfig, but cleaner to just handle it here.
+  # main issue w/ handling in getConfig is that next hot reload may not reload when
+  # /opt/deployment.json is changed, so there's no point
+  deployment = json.loads(open(deployment_state_filename).read())
+  config['deployment'] = deployment
 
   print(f'docker-compose command: {compose_command}')
 
-  with open(os.path.join('build', 'config.json'), 'w') as f:
+  with open(os.path.join('build', 'runtime-config.json'), 'w') as f:
     json.dump(config, f)
 
   config_nginx()
@@ -80,6 +103,9 @@ def main():
   elif command == 'node':
     docker_prep_if_down()
     docker_compose_call(['run', 'node', 'bash', '-c', 'node'])
+  elif command == 'deploy-contracts':
+    docker_prep_if_down()
+    docker_compose_call(['run', 'node', 'misc/deploy-contracts'])
   elif command == 'test-host':
     do_test(where='host')
   elif command == 'test':
@@ -160,6 +186,8 @@ def main():
       '.vscode',
       '--exclude',
       '.next',
+      '--exclude',
+      'hardhat',
       './',
       f'root@{host}:/opt/{PROJECT_NAME}/',
     ])
@@ -167,7 +195,7 @@ def main():
     run([
       'rsync',
       '-av',
-      args.config,
+      'build/deployed.conf.json',
       f'root@{host}:/opt/{PROJECT_NAME}/',
     ])
 
@@ -181,7 +209,7 @@ def main():
       f'root@{host}',
       f'''
         {DOCKER_INSTALL_SCRIPT}
-        /opt/{PROJECT_NAME}/run /opt/{PROJECT_NAME}/{args.config} {cmd}
+        /opt/{PROJECT_NAME}/run /opt/{PROJECT_NAME}/deployed.conf.json {cmd}
       ''',
     ])
   else:

@@ -1,5 +1,5 @@
 const fs = require('fs')
-const appConfig = JSON.parse(fs.readFileSync('/opt/config.json'))
+const appConfig = JSON.parse(fs.readFileSync('/opt/runtime-config.json'))
 
 console.log('loaded config for next.config.js:', appConfig)
 

@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+
+import subprocess
+import os
+import json
+import collections.abc
+import shutil
+
+deployment_fn = '/opt/deployment.json'
+
+def deep_update(d, u):
+    for k, v in u.items():
+        if isinstance(v, collections.abc.Mapping):
+            d[k] = deep_update(d.get(k, {}), v)
+        else:
+            d[k] = v
+    return d
+
+def between(input, prefix, suffix):
+  start_ix = input.index(prefix) + len(prefix)
+  end_ix = input.index(suffix, start_ix)
+  return input[start_ix:end_ix]
+
+def read_json_file(filename):
+  cur_data: dict
+  if os.path.exists(filename):
+    cur_data = json.loads(open(filename, 'r').read())
+  else:
+    cur_data = dict()
+  return cur_data
+
+def push_to_json_file(filename, new_data: dict):
+  cur_data = read_json_file(filename)
+  deep_update(cur_data, new_data)
+  open(filename, 'w').write(json.dumps(cur_data))
+
+def main():
+  os.chdir('/opt/app/hardhat')
+
+  shutil.rmtree('.openzeppelin')
+  os.mkdir('.openzeppelin')
+
+  for openzeppelin_file in read_json_file(deployment_fn).get('openzeppelin_files', list()):
+    with open('.openzeppelin/' + openzeppelin_file['name'], 'w') as f:
+      f.write(openzeppelin_file['content'])
+
+  for network in read_json_file('/opt/runtime-config.json')['public']['networks']:
+    sp_res = subprocess.run(['npx', 'hardhat', 'run', '--network', network, 'scripts/deploy.ts'], capture_output=True, check=False)
+    if sp_res.returncode != 0:
+      print('\nstdout:\n' + sp_res.stdout)
+      print('\nstderr:\n' + sp_res.stderr)
+      print()
+      raise Exception()
+    deploy_res = sp_res.stdout.decode()
+    deploy_res = json.loads(between(deploy_res, '*** beginning of json result ***', '*** end of json result ***'))
+    push_to_json_file(deployment_fn, deploy_res)
+
+    openzeppelin_files = []
+    for fn in os.listdir('.openzeppelin'):
+      openzeppelin_files.append({'name': fn, 'content': open('.openzeppelin/' + fn).read()})
+
+    push_to_json_file(deployment_fn, {'openzeppelin_files': openzeppelin_files})
+
+    for (network, contracts) in deploy_res['contract_deployments'].items():
+      for (contract_name, contract_info) in contracts.items():
+        print(f'deployed contract: {network} - {contract_name} - {contract_info["address"]}')
+    for (network, contracts) in deploy_res['contract_deployments'].items():
+      for (_, contract_info) in contracts.items():
+        subprocess.run(['npx', 'hardhat', 'verify', '--network', network, contract_info['address']])
+
+if __name__ == '__main__':
+  main()

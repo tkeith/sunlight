@@ -1,11 +1,11 @@
 services:
 
   node:
+    restart: "no"
     build:
       context: ../docker-contexts/node
-    restart: "no"
     volumes:
-      - ../build/config.json:/opt/config.json
-      - ../:/opt/app
+      - ..:/opt/app
+      - ../build/runtime-config.json:/opt/runtime-config.json
+      - ${deployment_state_filename}:/opt/deployment.json
       - node_modules:/opt/app/node_modules
-    command: python3 -u /opt/app/misc/node-run

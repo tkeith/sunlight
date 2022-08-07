@@ -23,7 +23,7 @@ def stop():
 def main():
   os.chdir('/opt/app')
 
-  with open('/opt/config.json') as f:
+  with open('/opt/runtime-config.json') as f:
     cfg = json.load(f)
 
   signal.signal(signal.SIGTERM, stop)

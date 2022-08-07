@@ -6,6 +6,7 @@ services:
       context: ../docker-contexts/code-server
     volumes:
       - ..:/opt/app
-      - ../build.config.json:/opt/config.json
+      - ../build/runtime-config.json:/opt/runtime-config.json
+      - ${deployment_state_filename}:/opt/deployment.json
       - node_modules:/opt/app/node_modules
       - scratch_volume:/opt/app/scratch_volume

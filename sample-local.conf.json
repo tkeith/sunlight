@@ -1,6 +1,7 @@
 {
   "deployer": {
-    "deployer_wallet_private_key": ""
+    "deployer_wallet_private_key": "",
+    "polygonscan_api_key": ""
   },
   "server": {
     "admin_password": "test123",
@@ -10,6 +11,7 @@
     "manager_wallet_private_key": ""
   },
   "public": {
-    "develop": true
+    "develop": true,
+    "networks": ["matic"]
   }
 }
