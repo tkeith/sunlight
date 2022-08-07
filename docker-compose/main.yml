@@ -13,7 +13,7 @@ services:
     restart: "no"
     volumes:
       - ../misc/nginx-run:/opt/run
-      - ../build/nginx-app.conf:/opt/nginx-app.conf
-      - ../build/nginx-admin-password.txt:/opt/nginx-admin-password.txt
+      - ../.cache/nginx-app.conf:/opt/nginx-app.conf
+      - ../.cache/nginx-admin-password.txt:/opt/nginx-admin-password.txt
     env_file:
-      - ../build/nginx.env
+      - ../.cache/nginx.env

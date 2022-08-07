@@ -61,12 +61,12 @@ def main():
 
   os.chdir(proj_dir)
 
-  if not os.path.exists('build'):
-    os.mkdir('build')
+  if not os.path.exists('.cache'):
+    os.mkdir('.cache')
 
   deployed_config = config.copy()
   del deployed_config['deployer']
-  open('build/deployed.conf.json', 'w').write(json.dumps(deployed_config))
+  open('.cache/deployed.conf.json', 'w').write(json.dumps(deployed_config))
 
   parse_config()
 
@@ -81,7 +81,7 @@ def main():
 
   print(f'docker-compose command: {compose_command}')
 
-  with open(os.path.join('build', 'runtime-config.json'), 'w') as f:
+  with open(os.path.join('.cache', 'runtime-config.json'), 'w') as f:
     json.dump(config, f)
 
   config_nginx()
@@ -183,6 +183,8 @@ def main():
       '--exclude',
       'build',
       '--exclude',
+      '.cache',
+      '--exclude',
       '.vscode',
       '--exclude',
       '.next',
@@ -195,7 +197,7 @@ def main():
     run([
       'rsync',
       '-av',
-      'build/deployed.conf.json',
+      '.cache/deployed.conf.json',
       f'root@{host}:/opt/{PROJECT_NAME}/',
     ])
 
@@ -561,7 +563,7 @@ def config_nginx():
       }}
     ''')
 
-  with open(os.path.join('build', 'nginx-app.conf'), 'w') as f:
+  with open(os.path.join('.cache', 'nginx-app.conf'), 'w') as f:
     f.write(nginx_config)
 
   nginx_env = textwrap.dedent(f'''
@@ -569,10 +571,10 @@ def config_nginx():
     CERTBOT_DOMAIN={domain}
     CERTBOT_EMAIL={CERTBOT_EMAIL}
   ''')
-  with open(os.path.join('build', 'nginx.env'), 'w') as f:
+  with open(os.path.join('.cache', 'nginx.env'), 'w') as f:
     f.write(nginx_env)
 
-  with open(os.path.join('build', 'nginx-admin-password.txt'), 'w') as f:
+  with open(os.path.join('.cache', 'nginx-admin-password.txt'), 'w') as f:
     f.write(admin_password)
 
 if __name__ == '__main__':

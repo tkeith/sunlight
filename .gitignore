@@ -1,5 +1,6 @@
 .DS_Store
 build
+.cache
 /*.conf.json
 /*.deployment.json
 !sample-local.conf.json

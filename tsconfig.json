@@ -3,7 +3,7 @@
     "target": "esnext",
     "jsx": "preserve",
     "module": "esnext",
-    "outDir": "build/dist",
+    "outDir": ".cache/dist",
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
