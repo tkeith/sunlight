@@ -87,7 +87,7 @@ def main():
   # /opt/deployment.json is changed, so there's no point
   if not config_is_runtime:
     deployment = json.loads(open(deployment_state_filename).read())
-    config['public']['contract_deployments'] = deployment['contract_deployments']
+    config['public']['contract_deployments'] = deployment.get('contract_deployments', dict())
 
   print(f'docker-compose command: {compose_command}')
 

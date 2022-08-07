@@ -5,6 +5,7 @@ import os
 import json
 import collections.abc
 import shutil
+import time
 
 deployment_fn = '/opt/deployment.json'
 
@@ -47,8 +48,8 @@ def main():
   for network in read_json_file('/opt/runtime-config.json')['public']['networks']:
     sp_res = subprocess.run(['npx', 'hardhat', 'run', '--network', network, 'scripts/deploy.ts'], capture_output=True, check=False)
     if sp_res.returncode != 0:
-      print('\nstdout:\n' + sp_res.stdout)
-      print('\nstderr:\n' + sp_res.stderr)
+      print('\nstdout:\n' + sp_res.stdout.decode())
+      print('\nstderr:\n' + sp_res.stderr.decode())
       print()
       raise Exception()
     deploy_res = sp_res.stdout.decode()
@@ -66,7 +67,21 @@ def main():
         print(f'deployed contract: {network} - {contract_name} - {contract_info["address"]}')
     for (network, contracts) in deploy_res['contract_deployments'].items():
       for (_, contract_info) in contracts.items():
-        subprocess.run(['npx', 'hardhat', 'verify', '--network', network, contract_info['address']])
+        stime = time.time()
+        while True:
+          try:
+            res = subprocess.run(['npx', 'hardhat', 'verify', '--network', network, contract_info['address']], capture_output=True)
+            out = res.stdout.decode() + res.stderr.decode()
+            print(out)
+            if 'error occurred' in out:
+              raise Exception('failed to verify contract')
+            break # success
+          except:
+            if time.time() - stime > 300:
+              print('failed for over 5 mins, giving up')
+              raise
+            print('verification attempt failed, retrying for up to 5 mins')
+            time.sleep(1)
 
 if __name__ == '__main__':
   main()

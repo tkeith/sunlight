@@ -1,29 +1,43 @@
 import { readFileSync } from "fs"
 import hre, { ethers, upgrades } from "hardhat"
 import _ from "lodash"
+import getConfig from "../../lib/getConfig"
 
-const contract_names = ["MainContract"]
+const contractNames = ["MainContract"]
 
 async function main() {
 
+  const prevContractDeployments = getConfig().public.contract_deployments
+
   let contractDeployments: any = {}
 
-  for (const contract_name of contract_names) {
-    const Contract = await ethers.getContractFactory(contract_name)
+  for (const contractName of contractNames) {
+    console.log('handling contract: ' + contractName)
 
-    const contract = await upgrades.deployProxy(Contract, [], { initializer: 'initialize', kind: 'transparent' })
+    const Contract = await ethers.getContractFactory(contractName)
+    const networkName = hre.network.name
 
-    await contract.deployed()
+    let address: string = prevContractDeployments[networkName]?.[contractName]?.address
+    if (address) {
+      console.log('already deployed, need to upgrade')
+      await upgrades.upgradeProxy(address, Contract)
+    } else {
+      console.log('not already deployed, need to deploy fresh')
+      const contract = await upgrades.deployProxy(Contract, [], { initializer: 'initialize', kind: 'transparent' })
 
-    const networkName = (await contract.provider.getNetwork()).name
-    const address = contract.address
-    const abi = JSON.parse(readFileSync(`./artifacts/contracts/${contract_name}.sol/${contract_name}.json`, 'utf8')).abi
+      await contract.deployed()
+
+      // const networkName = (await contract.provider.getNetwork()).name
+      address = contract.address
+    }
+
+    const abi = JSON.parse(readFileSync(`./artifacts/contracts/${contractName}.sol/${contractName}.json`, 'utf8')).abi
 
     _.merge(contractDeployments, {
       [networkName]: {
-        [contract_name]: {
+        [contractName]: {
           address: address,
-            abi: abi
+          abi: abi
         }
       }
     })
