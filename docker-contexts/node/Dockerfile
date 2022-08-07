@@ -8,4 +8,4 @@ WORKDIR /opt/app
 # RUN npm install
 # this is now handled at runtime by installing into a shared volume
 
-CMD python3 -u /opt/app/misc/node-run
+CMD exec python3 -u /opt/app/misc/node-run

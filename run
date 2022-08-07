@@ -25,14 +25,17 @@ DOCKER_INSTALL_SCRIPT = '''
   if ! which dockerd; then
     curl -fsSL https://get.docker.com | bash
   fi
-  if ! docker compose && ! which docker-compose; then
+  if ! docker compose >/dev/null 2>&1 && ! which docker-compose; then
     curl -L "https://github.com/docker/compose/releases/download/v2.2.2/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
     chmod +x /usr/local/bin/docker-compose
   fi
 '''
 
+config_is_runtime: bool
+config_filename: str
+
 def main():
-  global args, config
+  global args, config, config_is_runtime, config_filename
 
   proj_dir = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
 
@@ -46,15 +49,25 @@ def main():
 
   args = parser.parse_args()
 
-  config_filename: str = os.path.abspath(args.config)
-  config_filename_base: str = config_filename
-  for suffix in ['.json', '.conf']:
-    if config_filename_base.endswith(suffix):
-      config_filename_base = config_filename_base[:-len(suffix)]
-  deployment_state_filename: str = config_filename_base + '.deployment.json'
+  config_filename = os.path.abspath(args.config)
 
-  os.environ['config_filename'] = config_filename
+  deployment_state_filename: str
+  runtime_filename: str
+
+  if config_filename.endswith('.runtime.json'):
+    config_is_runtime = True
+    runtime_filename = config_filename
+    deployment_state_filename = '/dev/null'
+  else:
+    config_is_runtime = False
+    if not config_filename.endswith('.conf.json'):
+      raise Exception('config filename must end with .conf.json')
+    config_filename_base: str = config_filename[:-len('.conf.json')]
+    runtime_filename = config_filename_base + '.runtime.json'
+    deployment_state_filename = config_filename_base + '.deployment.json'
+
   os.environ['deployment_state_filename'] = deployment_state_filename
+  os.environ['runtime_filename'] = runtime_filename
 
   with open(config_filename) as config_f:
     config = json.load(config_f)
@@ -64,10 +77,6 @@ def main():
   if not os.path.exists('.cache'):
     os.mkdir('.cache')
 
-  deployed_config = config.copy()
-  del deployed_config['deployer']
-  open('.cache/deployed.conf.json', 'w').write(json.dumps(deployed_config))
-
   parse_config()
 
   if not os.path.exists(deployment_state_filename):
@@ -76,12 +85,13 @@ def main():
   # this could be handled dynamically in getConfig, but cleaner to just handle it here.
   # main issue w/ handling in getConfig is that next hot reload may not reload when
   # /opt/deployment.json is changed, so there's no point
-  deployment = json.loads(open(deployment_state_filename).read())
-  config['deployment'] = deployment
+  if not config_is_runtime:
+    deployment = json.loads(open(deployment_state_filename).read())
+    config['public']['contract_deployments'] = deployment['contract_deployments']
 
   print(f'docker-compose command: {compose_command}')
 
-  with open(os.path.join('.cache', 'runtime-config.json'), 'w') as f:
+  with open(runtime_filename, 'w') as f:
     json.dump(config, f)
 
   config_nginx()
@@ -105,7 +115,7 @@ def main():
     docker_compose_call(['run', 'node', 'bash', '-c', 'node'])
   elif command == 'deploy-contracts':
     docker_prep_if_down()
-    docker_compose_call(['run', 'node', 'misc/deploy-contracts'])
+    docker_compose_call(['run', '--no-deps', 'node', 'misc/deploy-contracts'])
   elif command == 'test-host':
     do_test(where='host')
   elif command == 'test':
@@ -119,8 +129,8 @@ def main():
       [Service]
       User=root
       WorkingDirectory={proj_dir}
-      ExecStart={proj_dir}/run {args.config} fg
-      ExecStop={proj_dir}/run {args.config} stop
+      ExecStart={proj_dir}/run deployed.runtime.json fg
+      ExecStop={proj_dir}/run deployed.runtime.json stop
       Restart=on-failure
       RestartSec=5
 
@@ -150,24 +160,41 @@ def main():
       'ssh',
       f'root@{host}',
       f'''
-        /opt/{PROJECT_NAME}/run /opt/{PROJECT_NAME}/{args.config} logs
+        /opt/{PROJECT_NAME}/run /opt/{PROJECT_NAME}/deployed.runtime.json logs
       ''',
     ])
   elif command in ['deploy', 'fg-remote']:
     if not host:
       raise Exception('host must be specified for deploy')
 
+    deployed_config = config.copy()
+    if 'deployer' in deployed_config:
+      # remove sensitive data like ssh private key, deployment wallet private key
+      del deployed_config['deployer']
+    open('.cache/deployed.runtime.json', 'w').write(json.dumps(deployed_config))
+
+    if config['deployer'].get('ssh_private_key'):
+      keypath = os.path.join('.cache', 'ssh_private_key')
+      with open(keypath, 'w') as f:
+        f.write(config['deployer']['ssh_private_key'] + '\n')
+      os.chmod(keypath, 0o600)
+      use_ssh_key_file = True
+    else:
+      use_ssh_key_file = False
+
     run([
       'ssh',
+    ] + (['-i', '.cache/ssh_private_key'] if use_ssh_key_file else []) + [
       f'root@{host}',
       f'''
         systemctl stop {PROJECT_NAME} || true
-        /opt/{PROJECT_NAME}/run /opt/{PROJECT_NAME}/{args.config} stop || true
+        /opt/{PROJECT_NAME}/run /opt/{PROJECT_NAME}/deployed.runtime.json stop || true
       ''',
     ])
 
     run([
       'rsync',
+    ] + (['-e', 'ssh -i .cache/ssh_private_key'] if use_ssh_key_file else []) + [
       '-av',
       '--delete-after',
       '--exclude',
@@ -177,7 +204,13 @@ def main():
       '--include',
       '/package-lock.json',
       '--exclude',
-      '/*.json',
+      '/*.conf.json',
+      '--exclude',
+      '/*.deployment.json',
+      '--exclude',
+      '/*.runtime.json',
+      '--exclude',
+      '/*.ipynb',
       '--exclude',
       'node_modules',
       '--exclude',
@@ -196,8 +229,9 @@ def main():
 
     run([
       'rsync',
+    ] + (['-e', 'ssh -i .cache/ssh_private_key'] if use_ssh_key_file else []) + [
       '-av',
-      '.cache/deployed.conf.json',
+      '.cache/deployed.runtime.json',
       f'root@{host}:/opt/{PROJECT_NAME}/',
     ])
 
@@ -208,10 +242,11 @@ def main():
 
     run([
       'ssh',
+    ] + (['-i', '.cache/ssh_private_key'] if use_ssh_key_file else []) + [
       f'root@{host}',
       f'''
         {DOCKER_INSTALL_SCRIPT}
-        /opt/{PROJECT_NAME}/run /opt/{PROJECT_NAME}/deployed.conf.json {cmd}
+        /opt/{PROJECT_NAME}/run /opt/{PROJECT_NAME}/deployed.runtime.json {cmd}
       ''',
     ])
   else:
@@ -348,11 +383,13 @@ def parse_config():
   if code_server_enabled:
     add_compose_config('code-server')
 
-  host = config['deployer'].get('host')
+  if not config_is_runtime:
+    host = config['deployer'].get('host')
+    domain = config['server'].get('domain')
+    if host and not domain:
+      domain = host
+      config['server']['domain'] = host
   domain = config['server'].get('domain')
-  if host and not domain:
-    domain = host
-    config['server']['domain'] = host
   if domain:
     use_ssl = True
     config['public']['base_url'] = f'https://{domain}'

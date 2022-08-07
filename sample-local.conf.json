@@ -1,5 +1,6 @@
 {
   "deployer": {
+    "ssh_private_key": "",
     "deployer_wallet_private_key": "",
     "polygonscan_api_key": ""
   },

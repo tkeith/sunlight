@@ -6,6 +6,6 @@ services:
       context: ../docker-contexts/node
     volumes:
       - ..:/opt/app
-      - ../.cache/runtime-config.json:/opt/runtime-config.json
+      - ${runtime_filename}:/opt/runtime-config.json
       - ${deployment_state_filename}:/opt/deployment.json
       - node_modules:/opt/app/node_modules

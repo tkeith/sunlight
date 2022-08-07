@@ -3,6 +3,7 @@ build
 .cache
 /*.conf.json
 /*.deployment.json
+/*.runtime.json
 !sample-local.conf.json
 node_modules
 local_jupyter_notebooks
