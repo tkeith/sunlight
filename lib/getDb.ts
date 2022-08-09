@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb"
+import { Db, MongoClient } from "mongodb"
 import asyncRetryTimeout from "./asyncRetryTimeout"
 import callOnce from "./callOnce"
 
@@ -9,6 +9,6 @@ const connect = async () => {
 
 const retryer = async () => asyncRetryTimeout(10000, 1000, connect);
 
-const getDb = callOnce(retryer);
+const getDb: () => Promise<Db> = callOnce(retryer);
 
 export default getDb

@@ -1,4 +1,4 @@
-import { createClient } from 'redis';
+import { createClient, RedisClientType } from 'redis';
 import asyncRetryTimeout from "./asyncRetryTimeout"
 import callOnce from './callOnce';
 
@@ -12,6 +12,6 @@ const connect = async () => {
 
 const retryer = async () => asyncRetryTimeout(10000, 1000, connect);
 
-const getRedis = callOnce(retryer);
+const getRedis: () => Promise<RedisClientType> = callOnce(retryer);
 
 export default getRedis
