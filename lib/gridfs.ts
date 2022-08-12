@@ -1,13 +1,14 @@
 import { Readable, Writable } from 'stream'
 import getDb from './getDb'
-import mongodb from 'mongodb'
+import mongodb, { GridFSBucket } from 'mongodb'
 import callOnce from "./callOnce"
 
-export const getGridFsBucket = callOnce(async function () {
-  return new mongodb.GridFSBucket(await getDb())
+export const getGridFsBucket: () => Promise<GridFSBucket> = callOnce(async function () {
+  const bucket = new GridFSBucket(await getDb())
+  return bucket
 });
 
-export async function saveString(filename: string, content: string, metadata = null) {
+export async function saveBufferOrString(filename: string, content: string | Buffer, metadata: any | null = null) {
   await deleteByFilename(filename)
   const grid = await getGridFsBucket()
   await Readable.from(content).pipe(grid.openUploadStream(filename, { metadata: metadata }))

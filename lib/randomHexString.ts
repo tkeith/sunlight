@@ -1,5 +1,5 @@
 import crypto from 'crypto'
 
-export default function randomHexString(length = 16) {
-  return crypto.randomBytes(length).toString('hex')
+export default function randomHexString(numBytes = 8) {
+  return crypto.randomBytes(numBytes).toString('hex')
 }
