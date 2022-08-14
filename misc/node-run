@@ -10,7 +10,7 @@ import typing
 
 processes: typing.List[subprocess.Popen] = []
 
-def stop():
+def stop(return_code = 0):
   print(f'stopping {len(processes)} processes...')
   for p in processes:
     p.terminate()
@@ -18,7 +18,7 @@ def stop():
   for p in processes:
     p.wait()
   print('processes stopped')
-  sys.exit()
+  sys.exit(return_code)
 
 def main():
   os.chdir('/opt/app')
@@ -48,8 +48,11 @@ def main():
   else:
     print('building next (production mode)')
     processes.append(subprocess.Popen(['npx', 'next', 'build']))
-    processes[-1].wait() # wait for installation to complete
+    next_build_res = processes[-1].wait() # wait for installation to complete
     processes.remove(processes[-1]) # no longer running
+    if next_build_res != 0:
+      print('next build failed! ending node-run')
+      stop(1)
     print('launching next (production mode)')
     processes.append(subprocess.Popen(['npx', 'next', 'start', '-p', '8001']))
 
