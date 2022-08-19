@@ -16,7 +16,7 @@ def main():
 
   if (not os.path.exists(package_lock_hash_filename)) or open(package_lock_hash_filename).read().strip() != cur_package_lock_hash:
     # need reinstall
-    subprocess.run(['npm', 'install'])
+    subprocess.run(['npm', 'install'], check=True)
     open(package_lock_hash_filename, 'w').write(cur_package_lock_hash)
 
 if __name__ == '__main__':
