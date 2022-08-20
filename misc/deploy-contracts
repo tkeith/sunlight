@@ -47,6 +47,8 @@ def main():
     with open('.openzeppelin/' + openzeppelin_file['name'], 'w') as f:
       f.write(openzeppelin_file['content'])
 
+  subprocess.run(['npx', 'hardhat', 'compile'], check=True)
+
   for network in read_json_file('/opt/runtime-config.json')['public']['networks']:
     sp_res = subprocess.run(['npx', 'hardhat', 'run', '--network', network, 'scripts/deploy.ts'], capture_output=True, check=False)
     if sp_res.returncode != 0:
@@ -54,6 +56,8 @@ def main():
       print('\nstderr:\n' + sp_res.stderr.decode())
       print()
       raise Exception()
+    print(sp_res.stderr.decode())
+    print(sp_res.stdout.decode())
     deploy_res = sp_res.stdout.decode()
     deploy_res = json.loads(between(deploy_res, '*** beginning of json result ***', '*** end of json result ***'))
     push_to_json_file(deployment_fn, deploy_res)
@@ -72,7 +76,7 @@ def main():
         stime = time.time()
         while True:
           try:
-            res = subprocess.run(['npx', 'hardhat', 'verify', '--network', network, contract_info['address']], capture_output=True, check=True)
+            res = subprocess.run(['npx', 'hardhat', 'verify', '--network', network, contract_info['address']], capture_output=True, check=False)
             out = res.stdout.decode() + res.stderr.decode()
             print(out)
             if 'error occurred' in out:

@@ -89,7 +89,8 @@ def main():
     deployment = json.loads(open(deployment_state_filename).read())
     config['public']['contract_deployments'] = deployment.get('contract_deployments', dict())
 
-  print(f'docker-compose command: {compose_command}')
+  compose_command_str = ' '.join(compose_command)
+  print(f'docker-compose command: {compose_command_str}')
 
   with open(runtime_filename, 'w') as f:
     json.dump(config, f)
@@ -306,7 +307,7 @@ def run(cmd, get_output=False, ignore_error=False):
 
 def docker_compose_call(args, get_output=False, ignore_error=False):
   cmd = compose_command + args
-  print(f'docker_compose_call: {cmd}')
+  print(f'docker_compose_call: ' + ' '.join(args))
   return run(cmd, get_output=get_output, ignore_error=ignore_error)
 
 def docker_down():
@@ -337,7 +338,7 @@ def docker_is_up():
     docker_compose_call(['top'])
     raise
 
-if subprocess.run(['docker', 'compose'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True).returncode == 0:
+if subprocess.run(['docker', 'compose'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False).returncode == 0:
   compose_command_base = ['docker', 'compose']
 else:
   compose_command_base = ['docker-compose']
