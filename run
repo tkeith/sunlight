@@ -12,7 +12,7 @@ from sys import argv
 import http.client
 import time
 
-PROJECT_NAME = 'dapp-framework'
+PROJECT_NAME = 'sunlight'
 DEFAULT_PORT = 8000
 NEXT_ENABLED = True
 EXPRESS_ENABLED = True
