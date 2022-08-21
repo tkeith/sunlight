@@ -17,3 +17,4 @@ services:
       - ../.cache/nginx-admin-password.txt:/opt/nginx-admin-password.txt
     env_file:
       - ../.cache/nginx.env
+    command: bash /opt/run

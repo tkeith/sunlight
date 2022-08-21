@@ -1,0 +1,12 @@
+services:
+
+  prisma-studio:
+    restart: "no"
+    build:
+      context: ../docker-contexts/node
+    volumes:
+      - ..:/opt/app
+      - node_modules:/opt/app/node_modules
+    ports:
+      - 127.0.0.1:5555:5555
+    command: npx prisma studio

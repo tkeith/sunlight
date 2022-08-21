@@ -9,3 +9,4 @@ services:
       - ${runtime_filename}:/opt/runtime-config.json
       - ${deployment_state_filename}:/opt/deployment.json
       - node_modules:/opt/app/node_modules
+    command: python3 -u /opt/app/misc/node-run

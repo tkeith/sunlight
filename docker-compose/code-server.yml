@@ -10,3 +10,4 @@ services:
       - ${deployment_state_filename}:/opt/deployment.json
       - node_modules:/opt/app/node_modules
       - scratch_volume:/opt/app/scratch_volume
+    command: code-server --bind-addr 0.0.0.0:8080 --auth none --cert false /opt/app
