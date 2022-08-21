@@ -9,7 +9,7 @@
     "mongo_express_enabled": true,
     "jupyter_enabled": true,
     "code_server_enabled": true,
-    "manager_wallet_private_key": ""
+    "service_wallet_private_key": ""
   },
   "public": {
     "develop": true,

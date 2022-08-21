@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.15;
+pragma solidity ^0.8.9;
 
-import "hardhat/console.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract MainContract is ERC721Upgradeable {
+contract MainContract is Initializable, ContextUpgradeable, OwnableUpgradeable {
     
   function initialize() public initializer {
-    
+    __Context_init();
+    __Ownable_init();
   }
   
 }
